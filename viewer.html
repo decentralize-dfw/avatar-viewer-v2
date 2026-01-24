@@ -100,18 +100,41 @@
               border-color: #fff;
           }
 
-          /* Main layout */
+          /* Main layout - 3 columns */
           .main-layout {
               display: grid;
-              grid-template-columns: 1fr 300px;
+              grid-template-columns: 350px 1fr 350px;
               grid-template-rows: 1fr;
               height: calc(100vh - 140px);
               position: relative;
               z-index: 1;
+              gap: 0;
           }
 
-          /* Left side - GLB viewer with info boxes */
-          .viewer-section {
+          /* LEFT - Large Video Player */
+          .left-video-section {
+              background: rgba(0, 0, 0, 0.95);
+              border-right: 1px solid rgba(255, 255, 255, 0.1);
+              position: relative;
+              overflow: hidden;
+          }
+
+          .left-video-frame {
+              width: 100%;
+              height: 100%;
+              position: relative;
+              border: 2px solid rgba(255, 255, 255, 0.2);
+          }
+
+          .left-video-frame video {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              filter: blur(0.3px) grayscale(0.3);
+          }
+
+          /* CENTER - GLB Viewer with Wireframe */
+          .center-viewer-section {
               position: relative;
               overflow: hidden;
           }
@@ -131,7 +154,78 @@
               filter: blur(0.5px) brightness(1.2) saturate(0.7);
           }
 
-          /* Crosshair overlay */
+          /* Wireframe overlay - STRONG */
+          .wireframe-overlay {
+              position: absolute;
+              top: 10%;
+              left: 10%;
+              right: 10%;
+              bottom: 10%;
+              border: 2px solid rgba(255, 255, 255, 0.6);
+              pointer-events: none;
+              z-index: 5;
+          }
+
+          /* Diagonal lines */
+          .wireframe-overlay::before,
+          .wireframe-overlay::after {
+              content: '';
+              position: absolute;
+              width: 141.4%;
+              height: 2px;
+              background: rgba(255, 255, 255, 0.4);
+              top: 50%;
+              left: -20%;
+          }
+
+          .wireframe-overlay::before {
+              transform: rotate(45deg);
+              transform-origin: center;
+          }
+
+          .wireframe-overlay::after {
+              transform: rotate(-45deg);
+              transform-origin: center;
+          }
+
+          /* Corner brackets */
+          .corner-bracket {
+              position: absolute;
+              width: 40px;
+              height: 40px;
+              border: 2px solid rgba(255, 255, 255, 0.8);
+              pointer-events: none;
+          }
+
+          .corner-bracket.top-left {
+              top: -2px;
+              left: -2px;
+              border-right: none;
+              border-bottom: none;
+          }
+
+          .corner-bracket.top-right {
+              top: -2px;
+              right: -2px;
+              border-left: none;
+              border-bottom: none;
+          }
+
+          .corner-bracket.bottom-left {
+              bottom: -2px;
+              left: -2px;
+              border-right: none;
+              border-top: none;
+          }
+
+          .corner-bracket.bottom-right {
+              bottom: -2px;
+              right: -2px;
+              border-left: none;
+              border-top: none;
+          }
+
+          /* Crosshair overlay - STRONG */
           .crosshair-overlay {
               position: absolute;
               top: 0;
@@ -139,21 +233,21 @@
               right: 0;
               bottom: 0;
               pointer-events: none;
-              z-index: 2;
+              z-index: 4;
           }
 
           .crosshair-overlay::before,
           .crosshair-overlay::after {
               content: '';
               position: absolute;
-              background: rgba(255, 255, 255, 0.3);
+              background: rgba(255, 255, 255, 0.5);
           }
 
           .crosshair-overlay::before {
               top: 50%;
               left: 0;
               right: 0;
-              height: 1px;
+              height: 2px;
               transform: translateY(-50%);
           }
 
@@ -161,7 +255,7 @@
               left: 50%;
               top: 0;
               bottom: 0;
-              width: 1px;
+              width: 2px;
               transform: translateX(-50%);
           }
 
@@ -184,154 +278,121 @@
               opacity: 0.3;
           }
 
-          /* Info boxes */
-          .info-box-top-right {
-              position: absolute;
-              top: 20px;
-              right: 20px;
-              width: 350px;
-              max-height: 200px;
-              background: rgba(0, 0, 0, 0.85);
-              border: 1px solid rgba(255, 255, 255, 0.3);
-              padding: 15px;
-              padding-top: 70px;
-              z-index: 4;
-              overflow-y: auto;
-          }
-
-          .info-box-top-right h2 {
-              font-size: 14px;
-              margin-bottom: 10px;
-              color: #fff;
-              text-transform: uppercase;
-              letter-spacing: 1px;
-          }
-
-          .info-box-top-right p {
-              font-size: 11px;
-              line-height: 1.5;
-              color: #fff;
-          }
-
-          .info-box-bottom-left {
-              position: absolute;
-              bottom: 20px;
-              left: 20px;
-              width: 400px;
-              max-height: 400px;
-              background: rgba(0, 0, 0, 0.85);
-              border: 1px solid rgba(255, 255, 255, 0.3);
-              padding: 15px;
-              padding-top: 70px;
-              z-index: 4;
-              overflow-y: auto;
-          }
-
-          .info-box-bottom-left h2 {
-              font-size: 16px;
-              margin-bottom: 10px;
-              color: #fff;
-              text-transform: uppercase;
-              letter-spacing: 2px;
-          }
-
-          .info-box-bottom-left h3 {
-              font-size: 12px;
-              margin-top: 15px;
-              margin-bottom: 8px;
-              color: #fff;
-              text-transform: uppercase;
-          }
-
-          .info-box-bottom-left p {
-              font-size: 10px;
-              line-height: 1.6;
-              color: #ccc;
-              margin-bottom: 10px;
-          }
-
-          /* Avatar thumbnail in info boxes */
-          .info-box-thumbnail {
-              position: absolute;
-              top: 10px;
-              left: 10px;
-              width: 50px;
-              height: 50px;
-              border: 1px solid rgba(255, 255, 255, 0.3);
-              filter: blur(1px);
-              object-fit: contain;
-              background: #000;
-          }
-
-          /* Scrollbar styling */
-          .info-box-top-right::-webkit-scrollbar,
-          .info-box-bottom-left::-webkit-scrollbar,
-          .video-sidebar::-webkit-scrollbar {
-              width: 6px;
-          }
-
-          .info-box-top-right::-webkit-scrollbar-track,
-          .info-box-bottom-left::-webkit-scrollbar-track,
-          .video-sidebar::-webkit-scrollbar-track {
-              background: rgba(255, 255, 255, 0.05);
-          }
-
-          .info-box-top-right::-webkit-scrollbar-thumb,
-          .info-box-bottom-left::-webkit-scrollbar-thumb,
-          .video-sidebar::-webkit-scrollbar-thumb {
-              background: rgba(255, 255, 255, 0.3);
-              border-radius: 3px;
-          }
-
-          /* Right side - Video sidebar */
-          .video-sidebar {
-              background: rgba(0, 0, 0, 0.9);
+          /* RIGHT - Technical Panel */
+          .right-tech-panel {
+              background: rgba(0, 0, 0, 0.95);
               border-left: 1px solid rgba(255, 255, 255, 0.1);
               padding: 20px;
               overflow-y: auto;
-              z-index: 2;
+              display: flex;
+              flex-direction: column;
+              gap: 20px;
           }
 
-          .video-item {
-              margin-bottom: 25px;
-              border: 1px solid rgba(255, 255, 255, 0.2);
-              background: rgba(0, 0, 0, 0.5);
-              position: relative;
-          }
-
-          .video-item-title {
-              font-size: 11px;
+          .look-number {
+              font-size: 48px;
+              font-weight: bold;
+              letter-spacing: 4px;
               color: #fff;
-              padding: 8px 10px;
-              background: rgba(0, 0, 0, 0.8);
-              border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-              text-transform: uppercase;
-              letter-spacing: 1px;
+              text-align: center;
+              font-family: "Courier New", monospace;
+              text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
           }
 
-          .video-item-info {
+          .avatar-name {
+              font-size: 14px;
+              color: #fff;
+              text-align: center;
+              letter-spacing: 1px;
+              margin-top: -10px;
+          }
+
+          .number-grid {
+              display: grid;
+              grid-template-columns: repeat(8, 1fr);
+              gap: 5px;
+              margin: 10px 0;
+          }
+
+          .number-cell {
+              aspect-ratio: 1;
+              border: 1px solid rgba(255, 255, 255, 0.3);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 10px;
+              color: #fff;
+              cursor: pointer;
+              transition: all 0.2s;
+          }
+
+          .number-cell:hover {
+              background: rgba(255, 255, 255, 0.1);
+          }
+
+          .number-cell.active {
+              background: rgba(255, 255, 255, 0.3);
+              border-color: #fff;
+          }
+
+          .thumbnail-section {
+              display: flex;
+              flex-direction: column;
+              gap: 10px;
+          }
+
+          .thumbnail-item {
+              border: 1px solid rgba(255, 255, 255, 0.2);
+              overflow: hidden;
+              position: relative;
+              cursor: pointer;
+          }
+
+          .thumbnail-item img {
+              width: 100%;
+              height: auto;
+              display: block;
+              filter: blur(1px) grayscale(0.2);
+              transition: all 0.3s;
+          }
+
+          .thumbnail-item:hover img {
+              filter: blur(0) grayscale(0);
+          }
+
+          .codes-section {
+              display: flex;
+              gap: 10px;
+              justify-content: space-between;
+              margin-top: 10px;
+          }
+
+          .barcode, .qrcode {
+              border: 1px solid rgba(255, 255, 255, 0.2);
+              padding: 10px;
+              background: rgba(0, 0, 0, 0.5);
+              flex: 1;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 8px;
+              color: #888;
+          }
+
+          .slogan {
+              font-size: 9px;
+              color: #fff;
+              text-align: center;
+              letter-spacing: 1px;
+              margin-top: 10px;
+              line-height: 1.4;
+          }
+
+          .tech-info {
               font-size: 9px;
               color: #888;
-              padding: 5px 10px;
-              background: rgba(0, 0, 0, 0.6);
-              border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-          }
-
-          .video-wrapper {
-              position: relative;
-              width: 100%;
-              padding-bottom: 56.25%; /* 16:9 aspect ratio */
-              overflow: hidden;
-          }
-
-          .video-wrapper video {
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              filter: blur(0.3px);
+              line-height: 1.6;
+              margin-top: 10px;
           }
 
           /* Bottom section with thumbnails */
@@ -539,9 +600,23 @@
       </div>
 
       <div class="main-layout" id="main-layout">
-        <div class="viewer-section">
+        <!-- LEFT - Large Video Player -->
+        <div class="left-video-section">
+          <div class="left-video-frame">
+            <video id="main-video" loop muted autoplay playsinline></video>
+          </div>
+        </div>
+
+        <!-- CENTER - GLB Viewer -->
+        <div class="center-viewer-section">
           <div class="viewer-container" id="viewer-container">
             <canvas id="viewer-canvas"></canvas>
+            <div class="wireframe-overlay">
+              <div class="corner-bracket top-left"></div>
+              <div class="corner-bracket top-right"></div>
+              <div class="corner-bracket bottom-left"></div>
+              <div class="corner-bracket bottom-right"></div>
+            </div>
             <div class="crosshair-overlay"></div>
             <div class="scan-effect"></div>
             <div class="loading-overlay" id="loading-overlay">
@@ -553,31 +628,33 @@
               </div>
             </div>
           </div>
-
-          <!-- Info boxes -->
-          <div class="info-box-top-right" id="info-box-top-right">
-            <img class="info-box-thumbnail" id="thumbnail-top" src="" alt="">
-            <h2 id="avatar-brief-title">SELECT AVATAR</h2>
-            <p id="avatar-brief-desc">Please select an avatar from the collection below.</p>
-          </div>
-
-          <div class="info-box-bottom-left" id="info-box-bottom-left">
-            <img class="info-box-thumbnail" id="thumbnail-bottom" src="" alt="">
-            <h2 id="avatar-detail-title">AVATAR DETAILS</h2>
-            <div id="avatar-detail-content">
-              <p>Detailed information will appear here when you select an avatar.</p>
-            </div>
-          </div>
         </div>
 
-        <!-- Video sidebar - ONLY ONE VIDEO -->
-        <div class="video-sidebar" id="video-sidebar">
-          <div class="video-item">
-            <div class="video-item-title">RUNWAY VIEW</div>
-            <div class="video-item-info" id="video-info-1">FIT #00 | LOADING...</div>
-            <div class="video-wrapper">
-              <video id="video-1" loop muted autoplay playsinline></video>
-            </div>
+        <!-- RIGHT - Technical Panel -->
+        <div class="right-tech-panel">
+          <div class="look-number" id="look-number">LOOK.01</div>
+          <div class="avatar-name" id="avatar-name">NEUE²DOJO CURATOR</div>
+
+          <div class="number-grid" id="number-grid">
+            <!-- Will be populated by JS -->
+          </div>
+
+          <div class="thumbnail-section" id="thumbnail-section">
+            <!-- Will be populated by JS -->
+          </div>
+
+          <div class="codes-section">
+            <div class="barcode">BARCODE</div>
+            <div class="qrcode">QR CODE</div>
+          </div>
+
+          <div class="slogan">
+            FUNCTIONAL CLOTHING FOR TOMORROW HUMANS<br>
+            WORKING IN POLLUTED FUTURE ENVIRONMENTS
+          </div>
+
+          <div class="tech-info" id="tech-info">
+            <!-- Will be populated by JS -->
           </div>
         </div>
       </div>
@@ -593,97 +670,6 @@
     </div>
 
     <script>
-// Avatar info mapping - from avatars-info-resume.txt
-const avatarBriefInfo = {
-    1: "Belli Capelli: The inaugural representative of smooth digital pixels replacing traditional texture, featuring iridescent fluid chrome skin and gravity-defying sculptural hair.",
-    2: "Lydia: A living pattern that drapes Henri Matisse's Fauvist colors and decorative motifs like a 3D skin, transplanting the tranquility of the 2D canvas into the dynamism of the runway.",
-    3: "Lucien: The physical embodiment of existential anguish, carrying the crushed, swirling, and distorted facial features of Francis Bacon's Study of Lucian Freud through a digital glitch aesthetic.",
-    4: "The Wrestler of Silence: A record of motion emerging from Bacon's wrestling figures, blending the chaotic anatomy of two intertwined bodies with the bruised hues of purple and blue in a plastic metamorphosis.",
-    5: "The Devoured Remnant: The most grotesque figure, merging George Dyer's profile with the tragedy of the crucifixion, resembling a slab of meat from a butcher shop with its fragmented muscle tissue and blood-red tones.",
-    6: "Squallor Shark: A \"new monster\" of the digital age, oscillating between a flayed humanoid and a mass of molten paint, transforming the legacy of the past into a rootless, anatomically ambiguous hybrid.",
-    7: "Neue*Dojo Curator: The restless and controlling \"curatorial spirit\" of the digital circus, combining Bacon's deformed portrait aesthetic with a black, structural, and authoritative garment.",
-    8: "Part 2: Virtual Fashion",
-    9: "Joker: A digital narrator blending the aristocratic uncanniness of Venetian carnivals with a cyberpunk aesthetic, proclaiming mastery over anonymity behind a futuristic \"Plague Doctor\" mask.",
-    10: "Bulky Bride: A monumental figure representing the cumbersome, transhumanist, and forced marriage between man and technology, supported by red mechanical legs hidden beneath massive layers of white fabric.",
-    11: "Mare: A cruel \"reality agent\" who resembles an alien goddess with her ceiling-gliding chrome body, yet uses her voice to strike the viewer with the reality of their own physical and financial misery.",
-    12: "Vertical CT Feed Person: A walking billboard of the digital dystopia, covered in a continuous flow of social media data and \"Meme Elegance\" slogans, where the individual has become the information they consume.",
-    13: "Astral Kindergarten Teacher: The predatory educator of the crypto world's \"greater fool theory,\" characterized by primary colors, geometric blocks, terrifyingly long limbs, and a cold financial vocabulary.",
-    14: "Invert Smiley: A narcissistic influencer in Matrix-inspired black armor, wearing a melting neon \"Smiley\" on their back as a symbol of digital nihilism and the rejection of traditional art.",
-    15: "Private Pile: A traumatized and paranoid digital soldier of the blockchain ecosystem, draped in overlapping military camouflage and burdened by the weight of constant \"rug-pull\" anxiety.",
-    16: "Uncle Red: An anonymous hacker aesthetic with a red cubic head and a pixelated smile, manifesting the blockchain's promise of \"existing without a trace\" through a rhythmic street fashion flow.",
-    17: "Xoku: A monument to the perfection of post-humanism, evolving from a low-poly prophecy into a high-resolution aristocracy with its white-lavender armor and aerodynamic form.",
-    18: "Weekend @ Saturn: A final satiric punchline reflecting the absurdity of virtual vanity and the void of \"bubble\" markets, featuring an over-inflated puffer coat and a static-filled monitor head.",
-    19: "Part 3: Evolution of Medium",
-    20: "Seize: A revolutionary leader of digital ownership emerging from a 2D meme card into a 3D being, draped in a black \"Haori\" covered in propaganda posters and an anonymous mask.",
-    21: "Midemoiselle: The \"kawaii-creep\" embodiment of internet subcultures, bringing the Milady Maker \"Neochibi\" aesthetic to the Metaverse with an oversized head and porcelain-doll vacantness.",
-    22: "Ferryman: A digital memento mori that transforms XCOPY's themes of death and decay into a flickering neon glitch, ferrying the viewer from Web2 into the chaotic underworld of Web3.",
-    23: "Panda Boss: A crypto-oligarch in a gold-detailed luxury robe, proving that NFTs have evolved from art objects into \"access tokens\" for elite social clubs and financial success.",
-    24: "Founder Ape: The point where the NFT becomes the user's \"second skin,\" merging the iconic Bored Ape aesthetic with \"laser eyes\" and a weary \"zombie\" disposition.",
-    25: "Davicni: A master of the Digital Renaissance, patching Leonardo da Vinci's historical legacy with data textures and pairing the Medici patronage of the past with the crypto whales of today.",
-    26: "Chromozom: A masterpiece that has transcended the boundaries of traditional art, stepping out of its gold-leafed frame to evolve with digital rather than biological DNA.",
-    27: "Can't See Beep Bop Crap: A monument to post-biological pride with an exaggerated muscular physique and a parasitic Doge-masked figure, boasting that numbers, not blood, flow through its veins.",
-    28: "Bone on Air: The silent guardian of the Metaverse's financial nihilism; a volumeless 2D cutout skeleton representing projects sacrificed at the altar of liquidity.",
-    29: "Ashium / Asiah: The \"Homo-Digitalis\" synthesis and the final link in the evolution, where 2D patterns and 3D bodies flow in perfect harmony as native citizens of the Metaverse.",
-    30: "Part 4: AI-Powered",
-    31: "RR-Tiger: The cold and flawless predator of autonomous art, blending Rolls-Royce luxury with military tech in a chrome-plated form that renders human labor obsolete in seconds.",
-    32: "Teddyminator: A grotesque \"hallucinatory\" output from the AI assembly line, fusing the innocence of a teddy bear with a biomechanical monster in a singular, glitchy anatomy.",
-    33: "Bad Luck: A template of autonomous digital slavery, performing a pre-programmed \"sexy walk\" as a \"fresh agent\" whose faith and character are written by the user.",
-    34: "Mayhem Clown: A carnival of terror symbolizing the loss of seriousness in internet chaos, merging colorful clown attire with heavy weaponry into a \"game-skin\" aesthetic of violence.",
-    35: "Samu: Evidence of history losing its depth in AI datasets, reducing the samurai to a \"cosplay\" asset with jelly-like viscous fabrics and acid-trip colors.",
-    36: "Baincaigai: The dark guardian of the Metaverse simulation, merging Balenciaga dystopia with Agent Smith's authority in a world where luxury is a \"forgery workshop.\"",
-    37: "exBun: A voluntary digital fetish object choosing a \"chrome prison\" of curated happiness over the real world, featuring a porcelain rabbit mask and a post-sexual wired body.",
-    38: "Thomas: A glitchy reflection of the faceless \"scammer elite,\" wearing an aristocratic coat woven from static noise and pixelated data—the embodiment of the \"Champagne Ponzi.\"",
-    39: "Bobo Delirium: The tragic victim of startup culture; a flayed muscle model in a clown wig, dancing in a state of delirium while desperately seeking funding amidst financial ruin.",
-    40: "Part 5: Transhumanism",
-    41: "Ya Bish Opps: The \"Rug-Pull\" priest of the digital purgatory, hiding behind an anonymous mask and carrying the sins of defrauded investors as a physical burden on his back.",
-    42: "sleekrobobtc / SPIKES: A post-human status symbol that has abandoned biological weakness for pure speed, manifesting as a razor-sharp, skeletal white Lamborghini.",
-    43: "Don Mac Don: The Archbishop of the McDonald's DAO, merging corporate icons with Catholic vestments to proclaim consumption as the new holy liturgy.",
-    44: "Call_2_Sim: The malevolent \"Daemon\" of the simulation; a blood-red succubus emerging to dramatic organ music as technology transcends the rational into the occult.",
-    45: "CYBORG-E-xyz: A commercialized data messiah levitating like a digital saint, whose only purpose is to market \"Steve Jobs data\" and meme-coin liquidity.",
-    46: "Sterolve iObs: A grotesque caricature of the corrupted founder cult, merging Steve Jobs' minimalism with steroid-pumped muscles to represent the \"pumping\" of financial assets over innovation.",
-    47: "Tobby Millefeuille: A slippery anonymous actor hidden beneath layers of fabric, using the \"parody\" label as a shield to evade legal and cultural responsibility.",
-    48: "Junya: An elitist editorial dictator in puffed samurai armor, rejecting the early Metaverse as \"half-assed\" and seeking to vacuum up the truth into his own sterile order.",
-    49: "Elextrogxd: The final sacrificial victim of the digital ritual; a stag-headed figure in a houndstooth suit, destined to have his \"wallet drained\" by the very system promising deification."
-};
-
-// Detailed info mapping - simplified version
-const avatarDetailedInfo = {
-    "Neue²Dojo Curator": {
-        title: "Neue*Dojo Curator",
-        sections: [
-            {
-                heading: "Visual Design and Aesthetic Structure",
-                content: "Closing the chapter, the \"Neue*Dojo Curator\" displays an authoritative and clothed stance, contrasting with the naked and vulnerable brutality of the previous avatars. The avatar is inspired by Francis Bacon's Portrait of Isabel Rawsthorne (1966), but her role is that of a \"manager\" rather than a \"model.\" She wears a costume with sharp black lines, resembling a nun's habit or a futuristic uniform. White graphics and logos on the garment emphasize her corporate identity."
-            },
-            {
-                heading: "Sound Design and Visual Relationship",
-                content: "This visual authority and distance merge with the exhaustion and anger in the sound design. Bacon's (or the Curator's) voice has stopped analyzing and is now directly rebelling against its existence: \"Please leave me in my peace... I am not happy to be recalled in this reality.\""
-            },
-            {
-                heading: "Conceptual Depth",
-                content: "The Neue*Dojo Curator symbolizes the \"Institutionalization and Fatigue of Art.\" She is the spirit of the past (Isabel Rawsthorne/Bacon) forcibly brought into the present (Metaverse)."
-            }
-        ]
-    },
-    "Lydia": {
-        title: "Lydia",
-        sections: [
-            {
-                heading: "Visual Design and Aesthetic Structure",
-                content: "\"Lydia\" bursts onto the stage from within Henri Matisse's 1937 painting Woman in Purple Coat, tearing through the two-dimensional reality of the canvas. The visual design is a daring experiment in \"texture mapping.\""
-            },
-            {
-                heading: "Sound Design and Visual Relationship",
-                content: "This forced mobility clashes with the tone of disdain and disbelief in Bacon's voice. Bacon highlights the visual anomaly by stating, \"Seeing Matisse's woman prance about... sounds utterly absurd.\""
-            },
-            {
-                heading: "Conceptual Depth",
-                content: "Lydia is an example of the \"Mechanical Loss of Aura.\" Matisse designed this figure as an object of decorative tranquility, as a master of the surface."
-            }
-        ]
-    }
-};
-
 // Configuration
 const CONFIG = {
     viewer: {
@@ -808,8 +794,7 @@ function loadAvatarData() {
             modelUrl: "https://raw.githubusercontent.com/decentralize-dfw/c2w2-glb/main/curator-900-opt-v67.glb",
             videoUrl: "https://video.wixstatic.com/video/54a996_1e4a766e4eae430582194bf1a145923e/1080p/mp4/file.mp4",
             fitNo: "22",
-            runwayPart: "Evolution of 2D Art (Part 1)",
-            briefInfoId: 7
+            runwayPart: "Evolution of 2D Art (Part 1)"
         },
         {
             id: 2,
@@ -819,8 +804,7 @@ function loadAvatarData() {
             modelUrl: "https://raw.githubusercontent.com/decentralize-dfw/c2w2-glb/main/matisse-900-opt-v80.glb",
             videoUrl: "https://video.wixstatic.com/video/54a996_f8c1f3cdf61b46cb8e159b1af7879b82/1080p/mp4/file.mp4",
             fitNo: "36",
-            runwayPart: "Evolution of 2D Art (Part 1)",
-            briefInfoId: 2
+            runwayPart: "Evolution of 2D Art (Part 1)"
         },
         {
             id: 3,
@@ -830,8 +814,7 @@ function loadAvatarData() {
             modelUrl: "https://raw.githubusercontent.com/decentralize-dfw/c2w2-glb/main/frued-human-900-opt-v72.glb",
             videoUrl: "https://video.wixstatic.com/video/54a996_7c69be9444f141f89a6f19c0495e6c10/1080p/mp4/file.mp4",
             fitNo: "27",
-            runwayPart: "Evolution of 2D Art (Part 1)",
-            briefInfoId: 3
+            runwayPart: "Evolution of 2D Art (Part 1)"
         }
     ];
 
@@ -839,6 +822,7 @@ function loadAvatarData() {
     populateCollectionButtons();
     populateAvatarCarousel();
     populateAvatarGrid();
+    populateNumberGrid();
 
     if (avatarData.length > 0) {
         loadAvatar(avatarData[0]);
@@ -861,6 +845,21 @@ function populateCollectionButtons() {
         btn.onclick = () => filterCollection(collection);
         collectionsContainer.appendChild(btn);
     });
+}
+
+function populateNumberGrid() {
+    const grid = document.getElementById('number-grid');
+    for (let i = 1; i <= 16; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'number-cell';
+        cell.textContent = i.toString().padStart(2, '0');
+        cell.onclick = () => {
+            if (i <= avatarData.length) {
+                loadAvatar(avatarData[i - 1]);
+            }
+        };
+        grid.appendChild(cell);
+    }
 }
 
 function filterCollection(collection) {
@@ -952,51 +951,44 @@ function loadAvatar(avatar) {
         item.classList.toggle('active', avatarData.indexOf(avatar) === idx);
     });
 
-    updateInfoBoxes(avatar);
-    updateVideos(avatar);
+    // Update number grid
+    document.querySelectorAll('.number-cell').forEach((cell, idx) => {
+        cell.classList.toggle('active', idx === avatarData.indexOf(avatar));
+    });
+
+    updateRightPanel(avatar);
+    updateVideo(avatar);
     loadGLBModel(avatar.modelUrl);
 }
 
-function updateInfoBoxes(avatar) {
+function updateRightPanel(avatar) {
+    const avatarIndex = avatarData.indexOf(avatar) + 1;
+    document.getElementById('look-number').textContent = `LOOK.${avatarIndex.toString().padStart(2, '0')}`;
+    document.getElementById('avatar-name').textContent = avatar.name.toUpperCase();
+
     // Update thumbnails
-    document.getElementById('thumbnail-top').src = avatar.thumbnailUrl;
-    document.getElementById('thumbnail-bottom').src = avatar.thumbnailUrl;
-
-    // Update brief info (top right)
-    const briefTitle = document.getElementById('avatar-brief-title');
-    const briefDesc = document.getElementById('avatar-brief-desc');
-
-    briefTitle.textContent = `${avatar.name.toUpperCase()} / FIT #${avatar.fitNo}`;
-    briefDesc.textContent = avatarBriefInfo[avatar.briefInfoId] || "No description available.";
-
-    // Update detailed info (bottom left)
-    const detailTitle = document.getElementById('avatar-detail-title');
-    const detailContent = document.getElementById('avatar-detail-content');
-
-    detailTitle.textContent = avatar.name.toUpperCase();
-
-    const detailInfo = avatarDetailedInfo[avatar.name];
-    if (detailInfo) {
-        let html = '';
-        detailInfo.sections.forEach(section => {
-            html += `<h3>${section.heading}</h3><p>${section.content}</p>`;
-        });
-        detailContent.innerHTML = html;
-    } else {
-        detailContent.innerHTML = `<p><strong>Runway Part:</strong> ${avatar.runwayPart}</p>
-                                   <p><strong>Fit Number:</strong> ${avatar.fitNo}</p>
-                                   <p><strong>Collection:</strong> ${avatar.collection}</p>`;
+    const thumbSection = document.getElementById('thumbnail-section');
+    thumbSection.innerHTML = '';
+    for (let i = 0; i < 3; i++) {
+        const thumbItem = document.createElement('div');
+        thumbItem.className = 'thumbnail-item';
+        const img = document.createElement('img');
+        img.src = avatar.thumbnailUrl;
+        thumbItem.appendChild(img);
+        thumbSection.appendChild(thumbItem);
     }
+
+    // Update tech info
+    document.getElementById('tech-info').innerHTML = `
+        FIT: #${avatar.fitNo}<br>
+        COLLECTION: ${avatar.collection}<br>
+        RUNWAY: ${avatar.runwayPart}
+    `;
 }
 
-function updateVideos(avatar) {
-    // Load only ONE video
-    const video = document.getElementById('video-1');
-    const videoInfo = document.getElementById('video-info-1');
-
+function updateVideo(avatar) {
+    const video = document.getElementById('main-video');
     video.src = avatar.videoUrl;
-    videoInfo.textContent = `FIT #${avatar.fitNo} | ${avatar.runwayPart.toUpperCase()}`;
-
     video.load();
     video.play().catch(e => console.log('Video autoplay prevented:', e));
 }
@@ -1047,13 +1039,11 @@ function loadGLBModel(modelUrl) {
 }
 
 function setupEventListeners() {
-    // Keyboard navigation
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft') navigateAvatar(-1);
         if (e.key === 'ArrowRight') navigateAvatar(1);
     });
 
-    // Grid toggle button
     document.getElementById('grid-toggle-button').addEventListener('click', toggleGridView);
 }
 
