@@ -142,7 +142,7 @@ body {
 }
 
 .collection-btn:hover { background-color: rgba(255, 255, 255, 0.1); }
-.collection-btn.active { background-color: rgba(255, 255, 255, 0.3); border-color: #fff; color: #fff; } /* Mavi kaldırıldı */
+.collection-btn.active { background-color: #fff; border-color: #fff; color: #000; }
 
 /* --- MAIN LAYOUT GRID --- */
 .main-layout {
@@ -465,10 +465,18 @@ body {
     z-index: 5;
 }
 
-.avatar-thumbnail { 
-    width: 100%; 
-    height: 100%; 
+.avatar-thumbnail {
+    width: 100%;
+    height: 100%;
     object-fit: contain; /* ASLA KESİLMEZ (CROP OLMAZ) */
+    filter: grayscale(0.8) brightness(0.9) contrast(1.1);
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+.avatar-item.active .avatar-thumbnail {
+    filter: grayscale(0.3) brightness(1.1) contrast(1.2);
 }
 
 /* --- LOADING & GRID VIEW --- */
@@ -500,23 +508,18 @@ body {
     margin: 0 auto;
 }
 
-/* KEYFRAMES: Animated Noise and Glitch */
+/* KEYFRAMES: Animated Noise */
 @keyframes gridNoise {
-    0%, 100% { opacity: 0.05; }
-    50% { opacity: 0.15; }
-}
-
-@keyframes gridGlitch {
-    0%, 90%, 100% { transform: translate(0, 0); }
-    92% { transform: translate(-2px, 1px); }
-    94% { transform: translate(2px, -1px); }
-    96% { transform: translate(-1px, -1px); }
-    98% { transform: translate(1px, 1px); }
+    0% { opacity: 0.3; transform: translateY(0); }
+    25% { opacity: 0.5; transform: translateY(-2px); }
+    50% { opacity: 0.4; transform: translateY(2px); }
+    75% { opacity: 0.6; transform: translateY(-1px); }
+    100% { opacity: 0.3; transform: translateY(0); }
 }
 
 @keyframes scanLine {
-    0% { top: 0%; }
-    100% { top: 100%; }
+    0% { top: -10%; }
+    100% { top: 110%; }
 }
 
 /* ID CARD KÜNYE */
@@ -548,11 +551,12 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.1);
-    animation: scanLine 3s linear infinite;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.2);
+    animation: scanLine 1.5s linear infinite;
     pointer-events: none;
     z-index: 10;
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
 }
 
 /* C2W2 HEADER */
@@ -626,14 +630,13 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: grayscale(1) brightness(1.2) contrast(1.5);
+    filter: grayscale(1) brightness(0.6) contrast(0.75);
     image-rendering: pixelated;
     transition: 0.3s;
-    animation: gridGlitch 5s infinite;
 }
 
 .grid-item:hover img {
-    filter: grayscale(1) brightness(1.4) contrast(1.6);
+    filter: grayscale(0.5) brightness(0.7) contrast(0.8) saturate(0.5);
 }
 
 /* Animated Noise Overlay */
@@ -647,21 +650,20 @@ body {
     background-image:
         repeating-linear-gradient(
             0deg,
-            rgba(255, 255, 255, 0.03) 0px,
+            rgba(255, 255, 255, 0.08) 0px,
             transparent 1px,
             transparent 2px,
-            rgba(255, 255, 255, 0.03) 3px
+            rgba(255, 255, 255, 0.08) 3px
         ),
         repeating-linear-gradient(
             90deg,
-            rgba(255, 255, 255, 0.03) 0px,
+            rgba(255, 255, 255, 0.08) 0px,
             transparent 1px,
             transparent 2px,
-            rgba(255, 255, 255, 0.03) 3px
+            rgba(255, 255, 255, 0.08) 3px
         );
     pointer-events: none;
-    opacity: 0.8;
-    animation: gridNoise 2s infinite;
+    animation: gridNoise 1.5s ease-in-out infinite;
 }
 
 /* INFO SECTION (Right side) */
