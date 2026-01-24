@@ -3,581 +3,478 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>C2W2 INDUSTRIAL STUDIO - Avatar Viewer</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <title>C2W2 INDUSTRIAL STUDIO</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
-          /* Global styles */
-          * {
-              margin: 0;
-              padding: 0;
-              box-sizing: border-box;
-              font-family: "Courier New", "Consolas", monospace;
-          }
-
-          body {
-              background-color: #000;
-              overflow: hidden;
-              color: #fff;
-          }
-
-          /* Grid background */
-          .grid-background {
-              position: fixed;
-              top: 0;
-              left: 0;
-              right: 0;
-              bottom: 0;
-              background-color: #000;
-              background-image:
-                  linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                  linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-              background-size: 50px 50px;
-              pointer-events: none;
-              z-index: 0;
-          }
-
-          /* Main container */
-          .container {
-              display: flex;
-              flex-direction: column;
-              height: 100vh;
-              width: 100vw;
-              margin: 0 auto;
-              overflow: hidden;
-              position: relative;
-          }
-
-          /* Top section with filters */
-          .top-section {
-              height: 60px;
-              width: 100%;
-              display: flex;
-              align-items: center;
-              padding: 15px 30px;
-              background-color: rgba(0, 0, 0, 0.8);
-              z-index: 10;
-              gap: 15px;
-              border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-          }
-
-          .title {
-              font-size: 18px;
-              color: #fff;
-              font-weight: bold;
-              letter-spacing: 2px;
-              text-transform: uppercase;
-          }
-
-          .collections {
-              display: flex;
-              gap: 10px;
-              margin-left: auto;
-          }
-
-          .collection-btn {
-              padding: 8px 16px;
-              border: 1px solid rgba(255, 255, 255, 0.3);
-              border-radius: 0;
-              background-color: rgba(0, 0, 0, 0.5);
-              cursor: pointer;
-              font-size: 11px;
-              transition: all 0.2s;
-              color: #fff;
-              text-transform: uppercase;
-              letter-spacing: 1px;
-          }
-
-          .collection-btn:hover {
-              background-color: rgba(255, 255, 255, 0.1);
-              border-color: rgba(255, 255, 255, 0.6);
-          }
-
-          .collection-btn.active {
-              background-color: rgba(255, 255, 255, 0.2);
-              border-color: #fff;
-          }
-
-          /* Main layout - 3 columns */
-          .main-layout {
-              display: grid;
-              grid-template-columns: 350px 1fr 350px;
-              grid-template-rows: 1fr;
-              height: calc(100vh - 140px);
-              position: relative;
-              z-index: 1;
-              gap: 0;
-          }
-
-          /* LEFT - Large Video Player */
-          .left-video-section {
-              background: rgba(0, 0, 0, 0.95);
-              border-right: 1px solid rgba(255, 255, 255, 0.1);
-              position: relative;
-              overflow: hidden;
-          }
-
-          .left-video-frame {
-              width: 100%;
-              height: 100%;
-              position: relative;
-              border: 2px solid rgba(255, 255, 255, 0.2);
-          }
-
-          .left-video-frame video {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              filter: blur(0.3px) grayscale(0.3);
-          }
-
-          /* CENTER - GLB Viewer with Wireframe */
-          .center-viewer-section {
-              position: relative;
-              overflow: hidden;
-          }
-
-          .viewer-container {
-              position: absolute;
-              top: 0;
-              left: 0;
-              right: 0;
-              bottom: 0;
-              z-index: 1;
-          }
-
-          #viewer-canvas {
-              width: 100%;
-              height: 100%;
-              filter: blur(0.5px) brightness(1.2) saturate(0.7);
-          }
-
-          /* Wireframe overlay - STRONG */
-          .wireframe-overlay {
-              position: absolute;
-              top: 10%;
-              left: 10%;
-              right: 10%;
-              bottom: 10%;
-              border: 2px solid rgba(255, 255, 255, 0.6);
-              pointer-events: none;
-              z-index: 5;
-          }
-
-          /* Diagonal lines */
-          .wireframe-overlay::before,
-          .wireframe-overlay::after {
-              content: '';
-              position: absolute;
-              width: 141.4%;
-              height: 2px;
-              background: rgba(255, 255, 255, 0.4);
-              top: 50%;
-              left: -20%;
-          }
-
-          .wireframe-overlay::before {
-              transform: rotate(45deg);
-              transform-origin: center;
-          }
-
-          .wireframe-overlay::after {
-              transform: rotate(-45deg);
-              transform-origin: center;
-          }
-
-          /* Corner brackets */
-          .corner-bracket {
-              position: absolute;
-              width: 40px;
-              height: 40px;
-              border: 2px solid rgba(255, 255, 255, 0.8);
-              pointer-events: none;
-          }
-
-          .corner-bracket.top-left {
-              top: -2px;
-              left: -2px;
-              border-right: none;
-              border-bottom: none;
-          }
-
-          .corner-bracket.top-right {
-              top: -2px;
-              right: -2px;
-              border-left: none;
-              border-bottom: none;
-          }
-
-          .corner-bracket.bottom-left {
-              bottom: -2px;
-              left: -2px;
-              border-right: none;
-              border-top: none;
-          }
-
-          .corner-bracket.bottom-right {
-              bottom: -2px;
-              right: -2px;
-              border-left: none;
-              border-top: none;
-          }
-
-          /* Crosshair overlay - STRONG */
-          .crosshair-overlay {
-              position: absolute;
-              top: 0;
-              left: 0;
-              right: 0;
-              bottom: 0;
-              pointer-events: none;
-              z-index: 4;
-          }
-
-          .crosshair-overlay::before,
-          .crosshair-overlay::after {
-              content: '';
-              position: absolute;
-              background: rgba(255, 255, 255, 0.5);
-          }
-
-          .crosshair-overlay::before {
-              top: 50%;
-              left: 0;
-              right: 0;
-              height: 2px;
-              transform: translateY(-50%);
-          }
-
-          .crosshair-overlay::after {
-              left: 50%;
-              top: 0;
-              bottom: 0;
-              width: 2px;
-              transform: translateX(-50%);
-          }
-
-          /* Scan line effect */
-          .scan-effect {
-              position: absolute;
-              top: 0;
-              left: 0;
-              right: 0;
-              bottom: 0;
-              background: repeating-linear-gradient(
-                  0deg,
-                  rgba(0, 0, 0, 0.1) 0px,
-                  rgba(0, 0, 0, 0.1) 1px,
-                  transparent 1px,
-                  transparent 2px
-              );
-              pointer-events: none;
-              z-index: 3;
-              opacity: 0.3;
-          }
-
-          /* RIGHT - Technical Panel */
-          .right-tech-panel {
-              background: rgba(0, 0, 0, 0.95);
-              border-left: 1px solid rgba(255, 255, 255, 0.1);
-              padding: 20px;
-              overflow-y: auto;
-              display: flex;
-              flex-direction: column;
-              gap: 20px;
-          }
-
-          .look-number {
-              font-size: 48px;
-              font-weight: bold;
-              letter-spacing: 4px;
-              color: #fff;
-              text-align: center;
-              font-family: "Courier New", monospace;
-              text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-          }
-
-          .avatar-name {
-              font-size: 14px;
-              color: #fff;
-              text-align: center;
-              letter-spacing: 1px;
-              margin-top: -10px;
-          }
-
-          .number-grid {
-              display: grid;
-              grid-template-columns: repeat(8, 1fr);
-              gap: 5px;
-              margin: 10px 0;
-          }
-
-          .number-cell {
-              aspect-ratio: 1;
-              border: 1px solid rgba(255, 255, 255, 0.3);
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-size: 10px;
-              color: #fff;
-              cursor: pointer;
-              transition: all 0.2s;
-          }
-
-          .number-cell:hover {
-              background: rgba(255, 255, 255, 0.1);
-          }
-
-          .number-cell.active {
-              background: rgba(255, 255, 255, 0.3);
-              border-color: #fff;
-          }
-
-          .thumbnail-section {
-              display: flex;
-              flex-direction: column;
-              gap: 10px;
-          }
-
-          .thumbnail-item {
-              border: 1px solid rgba(255, 255, 255, 0.2);
-              overflow: hidden;
-              position: relative;
-              cursor: pointer;
-          }
-
-          .thumbnail-item img {
-              width: 100%;
-              height: auto;
-              display: block;
-              filter: blur(1px) grayscale(0.2);
-              transition: all 0.3s;
-          }
-
-          .thumbnail-item:hover img {
-              filter: blur(0) grayscale(0);
-          }
-
-          .codes-section {
-              display: flex;
-              gap: 10px;
-              justify-content: space-between;
-              margin-top: 10px;
-          }
-
-          .barcode, .qrcode {
-              border: 1px solid rgba(255, 255, 255, 0.2);
-              padding: 10px;
-              background: rgba(0, 0, 0, 0.5);
-              flex: 1;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-size: 8px;
-              color: #888;
-          }
-
-          .slogan {
-              font-size: 9px;
-              color: #fff;
-              text-align: center;
-              letter-spacing: 1px;
-              margin-top: 10px;
-              line-height: 1.4;
-          }
-
-          .tech-info {
-              font-size: 9px;
-              color: #888;
-              line-height: 1.6;
-              margin-top: 10px;
-          }
-
-          /* Bottom section with thumbnails */
-          .bottom-section {
-              position: fixed;
-              left: 0;
-              right: 0;
-              bottom: 0;
-              height: 80px;
-              z-index: 5;
-              background: rgba(0, 0, 0, 0.9);
-              border-top: 1px solid rgba(255, 255, 255, 0.1);
-          }
-
-          .avatar-carousel {
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              position: relative;
-              width: 100%;
-              height: 100%;
-              gap: 10px;
-              padding: 10px;
-              overflow-x: auto;
-          }
-
-          .avatar-item {
-              width: 60px;
-              height: 60px;
-              cursor: pointer;
-              transition: all 0.3s ease;
-              opacity: 0.5;
-              border: 2px solid transparent;
-              flex-shrink: 0;
-          }
-
-          .avatar-item:hover {
-              opacity: 0.8;
-          }
-
-          .avatar-item.active {
-              opacity: 1;
-              border-color: #fff;
-              box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-          }
-
-          .avatar-thumbnail {
-              width: 100%;
-              height: 100%;
-              object-fit: contain;
-              background-color: #000;
-          }
-
-          .loading-overlay {
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              background-color: rgba(0, 0, 0, 0.9);
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
-              align-items: center;
-              z-index: 100;
-              color: #fff;
-          }
-
-          .loading-text {
-              font-size: 18px;
-              margin-bottom: 10px;
-              letter-spacing: 2px;
-          }
-
-          .loading-progress {
-              width: 200px;
-              height: 4px;
-              background-color: rgba(255, 255, 255, 0.1);
-              overflow: hidden;
-          }
-
-          .progress-bar {
-              height: 100%;
-              background-color: #fff;
-              width: 0%;
-              transition: width 0.3s ease;
-          }
-
-          /* Avatar Grid View Styles */
-          .avatar-grid-container {
-              position: absolute;
-              top: 60px;
-              left: 0;
-              right: 0;
-              bottom: 80px;
-              padding: 15px;
-              overflow-y: auto;
-              z-index: 6;
-              background-color: rgba(0, 0, 0, 0.95);
-              display: none;
-          }
-
-          .avatar-grid {
-              display: grid;
-              grid-template-columns: repeat(7, 1fr);
-              gap: 20px;
-              padding: 10px;
-          }
-
-          .grid-item {
-              width: 100%;
-              aspect-ratio: 1;
-              cursor: pointer;
-              transition: all 0.2s ease;
-              position: relative;
-              border-radius: 0;
-              overflow: hidden;
-              display: flex;
-              align-items: flex-end;
-              justify-content: center;
-          }
-
-          .grid-item img {
-              width: 100%;
-              height: 100%;
-              object-fit: contain;
-              border: 2px solid transparent;
-              transition: all 0.3s ease;
-              background-color: #000;
-              margin-bottom: 0;
-          }
-
-          .grid-item:hover img {
-              transform: scale(1.05);
-              border-color: rgba(255, 255, 255, 0.8);
-          }
-
-          .grid-item-name {
-              position: absolute;
-              bottom: 0;
-              left: 0;
-              right: 0;
-              background-color: rgba(0, 0, 0, 0.7);
-              color: white;
-              padding: 5px;
-              font-size: 10px;
-              text-align: center;
-              opacity: 0;
-              transition: opacity 0.3s ease;
-              word-break: break-word;
-          }
-
-          .grid-item:hover .grid-item-name {
-              opacity: 1;
-          }
-
-          .grid-toggle-button {
-              position: absolute;
-              bottom: 150px;
-              left: 50%;
-              transform: translateX(-50%);
-              width: 40px;
-              height: 40px;
-              background-color: rgba(255, 255, 255, 0.85);
-              border-radius: 50%;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              cursor: pointer;
-              z-index: 10;
-              box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-              transition: all 0.3s ease;
-          }
-
-          .grid-toggle-button:hover {
-              background-color: rgba(220, 220, 220, 0.9);
-          }
-
-          .no-results {
-              grid-column: 1 / -1;
-              text-align: center;
-              padding: 20px;
-              font-size: 14px;
-              color: #666;
-          }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Courier New", "Consolas", monospace;
+}
+
+body {
+    background-color: #000;
+    overflow: hidden;
+    color: #fff;
+}
+
+.grid-background {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #000;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+}
+
+.top-section {
+    height: 50px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 10;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.title {
+    font-size: 14px;
+    color: #fff;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.collections {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.collection-btn {
+    padding: 6px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background-color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    font-size: 10px;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.collection-btn:hover { background-color: rgba(255, 255, 255, 0.1); }
+.collection-btn.active { background-color: rgba(255, 255, 255, 0.2); border-color: #fff; }
+
+.main-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr 400px;
+    height: calc(100vh - 130px);
+    position: relative;
+    z-index: 1;
+}
+
+/* LEFT - Small Video */
+.left-video-section {
+    background: rgba(0, 0, 0, 0.95);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.video-label {
+    font-size: 10px;
+    color: #888;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.video-frame {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.video-frame video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(0.3px) grayscale(0.2);
+}
+
+.tech-icons-section {
+    margin-top: auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.tech-icon {
+    aspect-ratio: 1;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* CENTER - GLB Viewer */
+.center-viewer-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.viewer-container {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 1;
+}
+
+#viewer-canvas {
+    width: 100%;
+    height: 100%;
+    filter: blur(0.5px) brightness(1.2) saturate(0.7);
+}
+
+.wireframe-overlay {
+    position: absolute;
+    top: 10%; left: 10%; right: 10%; bottom: 10%;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    pointer-events: none;
+    z-index: 5;
+}
+
+.wireframe-overlay::before,
+.wireframe-overlay::after {
+    content: '';
+    position: absolute;
+    width: 141.4%;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.4);
+    top: 50%;
+    left: -20%;
+}
+
+.wireframe-overlay::before {
+    transform: rotate(45deg);
+    transform-origin: center;
+}
+
+.wireframe-overlay::after {
+    transform: rotate(-45deg);
+    transform-origin: center;
+}
+
+.corner-bracket {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    pointer-events: none;
+}
+
+.corner-bracket.top-left { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+.corner-bracket.top-right { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+.corner-bracket.bottom-left { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+.corner-bracket.bottom-right { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+.crosshair-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 4;
+}
+
+.crosshair-overlay::before,
+.crosshair-overlay::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.crosshair-overlay::before {
+    top: 50%; left: 0; right: 0;
+    height: 2px;
+    transform: translateY(-50%);
+}
+
+.crosshair-overlay::after {
+    left: 50%; top: 0; bottom: 0;
+    width: 2px;
+    transform: translateX(-50%);
+}
+
+.scan-effect {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.1) 0px,
+        rgba(0, 0, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0.3;
+}
+
+/* RIGHT - Info Panel */
+.right-info-panel {
+    background: rgba(0, 0, 0, 0.95);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.avatar-name-big {
+    font-size: 32px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    color: #fff;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+
+.avatar-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 5px;
+}
+
+.tag {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 4px 8px;
+    font-size: 9px;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.brief-info {
+    font-size: 11px;
+    line-height: 1.6;
+    color: #ccc;
+    margin-top: 10px;
+}
+
+.thumbnails-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.thumbnail-box {
+    aspect-ratio: 3/4;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+}
+
+.thumbnail-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(1px) grayscale(0.3);
+}
+
+.detail-text-box {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 12px;
+    margin-top: 10px;
+    max-height: 250px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.detail-text-box h3 {
+    font-size: 10px;
+    color: #fff;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+.detail-text-box p {
+    font-size: 9px;
+    line-height: 1.5;
+    color: #999;
+    margin-bottom: 10px;
+}
+
+.codes-row {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+}
+
+.code-box {
+    flex: 1;
+    aspect-ratio: 3/2;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    color: #555;
+}
+
+/* Bottom carousel */
+.bottom-section {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    height: 80px;
+    z-index: 5;
+    background: rgba(0, 0, 0, 0.9);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.avatar-carousel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    gap: 10px;
+    padding: 10px;
+    overflow-x: auto;
+}
+
+.avatar-item {
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    opacity: 0.5;
+    border: 2px solid transparent;
+    flex-shrink: 0;
+}
+
+.avatar-item:hover { opacity: 0.8; }
+.avatar-item.active { opacity: 1; border-color: #fff; box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+
+.avatar-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: #000;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    color: #fff;
+}
+
+.loading-text {
+    font-size: 16px;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+.loading-progress {
+    width: 200px;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: #fff;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.avatar-grid-container {
+    position: absolute;
+    top: 50px; left: 0; right: 0; bottom: 80px;
+    padding: 15px;
+    overflow-y: auto;
+    z-index: 6;
+    background-color: rgba(0, 0, 0, 0.95);
+    display: none;
+}
+
+.avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 20px;
+    padding: 10px;
+}
+
+.grid-item {
+    width: 100%;
+    aspect-ratio: 1;
+    cursor: pointer;
+    position: relative;
+}
+
+.grid-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border: 2px solid transparent;
+    background-color: #000;
+}
+
+.grid-item:hover img { transform: scale(1.05); border-color: rgba(255, 255, 255, 0.8); }
+
+.grid-item-name {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    font-size: 10px;
+    text-align: center;
+    opacity: 0;
+}
+
+.grid-item:hover .grid-item-name { opacity: 1; }
+
+.grid-toggle-button {
+    position: absolute;
+    bottom: 150px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.grid-toggle-button:hover { background-color: rgba(220, 220, 220, 0.9); }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -594,22 +491,29 @@
         <div class="collections" id="collections"></div>
       </div>
 
-      <!-- Grid View Container -->
       <div class="avatar-grid-container" id="avatar-grid-container">
         <div class="avatar-grid" id="avatar-grid"></div>
       </div>
 
       <div class="main-layout" id="main-layout">
-        <!-- LEFT - Large Video Player -->
+        <!-- LEFT - Small Video -->
         <div class="left-video-section">
-          <div class="left-video-frame">
+          <div class="video-label">RUNWAY FOOTAGE</div>
+          <div class="video-frame">
             <video id="main-video" loop muted autoplay playsinline></video>
+          </div>
+
+          <div class="tech-icons-section">
+            <div class="tech-icon"><i class="fas fa-crosshairs"></i></div>
+            <div class="tech-icon"><i class="fas fa-wifi"></i></div>
+            <div class="tech-icon"><i class="fas fa-cube"></i></div>
+            <div class="tech-icon"><i class="fas fa-qrcode"></i></div>
           </div>
         </div>
 
         <!-- CENTER - GLB Viewer -->
         <div class="center-viewer-section">
-          <div class="viewer-container" id="viewer-container">
+          <div class="viewer-container">
             <canvas id="viewer-canvas"></canvas>
             <div class="wireframe-overlay">
               <div class="corner-bracket top-left"></div>
@@ -620,9 +524,7 @@
             <div class="crosshair-overlay"></div>
             <div class="scan-effect"></div>
             <div class="loading-overlay" id="loading-overlay">
-              <div class="loading-text">
-                LOADING... <span id="loading-percentage">0%</span>
-              </div>
+              <div class="loading-text">LOADING... <span id="loading-percentage">0%</span></div>
               <div class="loading-progress">
                 <div class="progress-bar" id="progress-bar"></div>
               </div>
@@ -630,47 +532,78 @@
           </div>
         </div>
 
-        <!-- RIGHT - Technical Panel -->
-        <div class="right-tech-panel">
-          <div class="look-number" id="look-number">LOOK.01</div>
-          <div class="avatar-name" id="avatar-name">NEUE²DOJO CURATOR</div>
+        <!-- RIGHT - Info Panel -->
+        <div class="right-info-panel">
+          <div class="avatar-name-big" id="avatar-name-big">NEUE DOJO<br>CURATOR</div>
 
-          <div class="number-grid" id="number-grid">
-            <!-- Will be populated by JS -->
+          <div class="avatar-tags" id="avatar-tags">
+            <div class="tag">FIT #22</div>
+            <div class="tag">PAINTINGS</div>
+            <div class="tag">PART 1</div>
           </div>
 
-          <div class="thumbnail-section" id="thumbnail-section">
-            <!-- Will be populated by JS -->
+          <div class="brief-info" id="brief-info">
+            The restless and controlling "curatorial spirit" of the digital circus, combining Bacon's deformed portrait aesthetic with a black, structural, and authoritative garment.
           </div>
 
-          <div class="codes-section">
-            <div class="barcode">BARCODE</div>
-            <div class="qrcode">QR CODE</div>
+          <div class="thumbnails-row" id="thumbnails-row">
+            <div class="thumbnail-box"><img src="" alt=""></div>
+            <div class="thumbnail-box"><img src="" alt=""></div>
+            <div class="thumbnail-box"><img src="" alt=""></div>
           </div>
 
-          <div class="slogan">
-            FUNCTIONAL CLOTHING FOR TOMORROW HUMANS<br>
-            WORKING IN POLLUTED FUTURE ENVIRONMENTS
+          <div class="detail-text-box" id="detail-text-box">
+            <h3>VISUAL DESIGN</h3>
+            <p>Closing the chapter, the "Neue*Dojo Curator" displays an authoritative and clothed stance, contrasting with the naked and vulnerable brutality of the previous avatars.</p>
+
+            <h3>SOUND DESIGN</h3>
+            <p>This visual authority and distance merge with the exhaustion and anger in the sound design.</p>
+
+            <h3>CONCEPTUAL DEPTH</h3>
+            <p>The Neue*Dojo Curator symbolizes the "Institutionalization and Fatigue of Art."</p>
           </div>
 
-          <div class="tech-info" id="tech-info">
-            <!-- Will be populated by JS -->
+          <div class="codes-row">
+            <div class="code-box">BARCODE</div>
+            <div class="code-box">QR CODE</div>
           </div>
         </div>
       </div>
 
-      <!-- Grid toggle button -->
       <div class="grid-toggle-button" id="grid-toggle-button">
         <i class="fas fa-th-large"></i>
       </div>
 
-      <div class="bottom-section" id="bottom-section">
+      <div class="bottom-section">
         <div class="avatar-carousel" id="avatar-carousel"></div>
       </div>
     </div>
 
     <script>
-// Configuration
+const avatarBriefInfo = {
+    1: "The restless and controlling \"curatorial spirit\" of the digital circus, combining Bacon's deformed portrait aesthetic with a black, structural, and authoritative garment.",
+    2: "A living pattern that drapes Henri Matisse's Fauvist colors and decorative motifs like a 3D skin, transplanting the tranquility of the 2D canvas into the dynamism of the runway.",
+    3: "The physical embodiment of existential anguish, carrying the crushed, swirling, and distorted facial features of Francis Bacon's Study of Lucian Freud through a digital glitch aesthetic."
+};
+
+const avatarDetailedInfo = {
+    "Neue²Dojo Curator": {
+        visual: "Closing the chapter, the \"Neue*Dojo Curator\" displays an authoritative and clothed stance, contrasting with the naked and vulnerable brutality of the previous avatars. The avatar is inspired by Francis Bacon's Portrait of Isabel Rawsthorne (1966), but her role is that of a \"manager\" rather than a \"model.\"",
+        sound: "This visual authority and distance merge with the exhaustion and anger in the sound design. Bacon's (or the Curator's) voice has stopped analyzing and is now directly rebelling against its existence.",
+        concept: "The Neue*Dojo Curator symbolizes the \"Institutionalization and Fatigue of Art.\" She is the spirit of the past (Isabel Rawsthorne/Bacon) forcibly brought into the present (Metaverse)."
+    },
+    "Lydia": {
+        visual: "\"Lydia\" bursts onto the stage from within Henri Matisse's 1937 painting Woman in Purple Coat, tearing through the two-dimensional reality of the canvas. The visual design is a daring experiment in \"texture mapping.\"",
+        sound: "This forced mobility clashes with the tone of disdain and disbelief in Bacon's voice. Bacon highlights the visual anomaly by stating, \"Seeing Matisse's woman prance about... sounds utterly absurd.\"",
+        concept: "Lydia is an example of the \"Mechanical Loss of Aura.\" Matisse designed this figure as an object of decorative tranquility, as a master of the surface."
+    },
+    "Lucien": {
+        visual: "Born from Francis Bacon's Study of Lucian Freud, \"Lucien\" is a monument to an existential crisis brought to the runway. Visually, the technique of the \"face crushed by swirling brushstrokes\" found in Bacon's paintings is brutally applied to the 3D model's head.",
+        sound: "This sense of entrapment and pain merges with the confession from Bacon's own (AI) voice: \"I painted Lucian Freud to trap him under that raw intensity, the violence of paint.\"",
+        concept: "Lucien is the prototype of \"Digital Anxiety.\" Bacon painted the human figure as an \"attack on the nervous system.\" The Metaverse version sets this attack in motion."
+    }
+};
+
 const CONFIG = {
     viewer: {
         modelScale: 0.8,
@@ -678,17 +611,12 @@ const CONFIG = {
     }
 };
 
-// Global variables
 let scene, camera, renderer, controls, clock = new THREE.Clock();
 let mixer = null, currentModel = null;
 let activeAvatar = null, avatarData = [], collections = [], activeCollection = "ALL";
-let activeAvatarIndex = 0, isModelLoading = false;
-let activeHdriIndex = 0;
-let isGridView = false;
+let isModelLoading = false, isGridView = false;
 
-const hdriPaths = [
-    'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/equirectangular/venice_sunset_1k.hdr'
-];
+const hdriPaths = ['https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/equirectangular/venice_sunset_1k.hdr'];
 
 document.addEventListener('DOMContentLoaded', () => {
     initMeshoptDecoder();
@@ -696,10 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initMeshoptDecoder() {
-    if (typeof MeshoptDecoder === 'undefined') {
-        console.error("MeshoptDecoder not available!");
-        return;
-    }
+    if (typeof MeshoptDecoder === 'undefined') return;
     THREE.GLTFLoader.prototype.setMeshoptDecoder = function(decoder) {
         this.meshoptDecoder = decoder;
         return this;
@@ -735,7 +660,6 @@ function initScene() {
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.enablePan = true;
     controls.minDistance = 1.5;
     controls.maxDistance = 6;
     controls.autoRotate = true;
@@ -743,31 +667,23 @@ function initScene() {
     controls.target.set(CONFIG.viewer.camera.target.x, CONFIG.viewer.camera.target.y, CONFIG.viewer.camera.target.z);
     controls.minPolarAngle = Math.PI / 4;
     controls.maxPolarAngle = Math.PI / 1.5;
-    controls.enabled = true;
     controls.update();
 
     window.addEventListener('resize', onWindowResize);
-    setupHDRIEnvironment(activeHdriIndex);
-    addBasicLighting();
-    animate();
-}
 
-function setupHDRIEnvironment(index) {
-    const hdriPath = hdriPaths[index];
     const rgbeLoader = new THREE.RGBELoader();
-    rgbeLoader.load(hdriPath, function(texture) {
+    rgbeLoader.load(hdriPaths[0], function(texture) {
         texture.mapping = THREE.EquirectangularReflectionMapping;
         scene.environment = texture;
     });
-}
 
-function addBasicLighting() {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambientLight);
-
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
     directionalLight.position.set(5, 10, 7.5);
     scene.add(directionalLight);
+
+    animate();
 }
 
 function animate() {
@@ -794,7 +710,8 @@ function loadAvatarData() {
             modelUrl: "https://raw.githubusercontent.com/decentralize-dfw/c2w2-glb/main/curator-900-opt-v67.glb",
             videoUrl: "https://video.wixstatic.com/video/54a996_1e4a766e4eae430582194bf1a145923e/1080p/mp4/file.mp4",
             fitNo: "22",
-            runwayPart: "Evolution of 2D Art (Part 1)"
+            runwayPart: "Evolution of 2D Art (Part 1)",
+            briefInfoId: 1
         },
         {
             id: 2,
@@ -804,7 +721,8 @@ function loadAvatarData() {
             modelUrl: "https://raw.githubusercontent.com/decentralize-dfw/c2w2-glb/main/matisse-900-opt-v80.glb",
             videoUrl: "https://video.wixstatic.com/video/54a996_f8c1f3cdf61b46cb8e159b1af7879b82/1080p/mp4/file.mp4",
             fitNo: "36",
-            runwayPart: "Evolution of 2D Art (Part 1)"
+            runwayPart: "Evolution of 2D Art (Part 1)",
+            briefInfoId: 2
         },
         {
             id: 3,
@@ -814,7 +732,8 @@ function loadAvatarData() {
             modelUrl: "https://raw.githubusercontent.com/decentralize-dfw/c2w2-glb/main/frued-human-900-opt-v72.glb",
             videoUrl: "https://video.wixstatic.com/video/54a996_7c69be9444f141f89a6f19c0495e6c10/1080p/mp4/file.mp4",
             fitNo: "27",
-            runwayPart: "Evolution of 2D Art (Part 1)"
+            runwayPart: "Evolution of 2D Art (Part 1)",
+            briefInfoId: 3
         }
     ];
 
@@ -822,7 +741,6 @@ function loadAvatarData() {
     populateCollectionButtons();
     populateAvatarCarousel();
     populateAvatarGrid();
-    populateNumberGrid();
 
     if (avatarData.length > 0) {
         loadAvatar(avatarData[0]);
@@ -831,7 +749,6 @@ function loadAvatarData() {
 
 function populateCollectionButtons() {
     const collectionsContainer = document.getElementById('collections');
-
     const allBtn = document.createElement('button');
     allBtn.className = 'collection-btn active';
     allBtn.textContent = 'ALL';
@@ -847,26 +764,10 @@ function populateCollectionButtons() {
     });
 }
 
-function populateNumberGrid() {
-    const grid = document.getElementById('number-grid');
-    for (let i = 1; i <= 16; i++) {
-        const cell = document.createElement('div');
-        cell.className = 'number-cell';
-        cell.textContent = i.toString().padStart(2, '0');
-        cell.onclick = () => {
-            if (i <= avatarData.length) {
-                loadAvatar(avatarData[i - 1]);
-            }
-        };
-        grid.appendChild(cell);
-    }
-}
-
 function filterCollection(collection) {
     activeCollection = collection;
     document.querySelectorAll('.collection-btn').forEach(btn => {
-        btn.classList.toggle('active',
-            btn.textContent === collection || (collection === 'ALL' && btn.textContent === 'ALL'));
+        btn.classList.toggle('active', btn.textContent === collection || (collection === 'ALL' && btn.textContent === 'ALL'));
     });
     populateAvatarCarousel();
     populateAvatarGrid();
@@ -875,25 +776,19 @@ function filterCollection(collection) {
 function populateAvatarCarousel() {
     const carousel = document.getElementById('avatar-carousel');
     carousel.innerHTML = '';
-
-    const filteredAvatars = activeCollection === 'ALL' ?
-        avatarData : avatarData.filter(a => a.collection === activeCollection);
+    const filteredAvatars = activeCollection === 'ALL' ? avatarData : avatarData.filter(a => a.collection === activeCollection);
 
     filteredAvatars.forEach((avatar, index) => {
         const item = document.createElement('div');
         item.className = 'avatar-item' + (index === 0 ? ' active' : '');
         item.onclick = () => {
-            if (isGridView) {
-                toggleGridView();
-            }
+            if (isGridView) toggleGridView();
             loadAvatar(avatar);
         };
-
         const img = document.createElement('img');
         img.className = 'avatar-thumbnail';
         img.src = avatar.thumbnailUrl;
         img.alt = avatar.name;
-
         item.appendChild(img);
         carousel.appendChild(item);
     });
@@ -902,9 +797,7 @@ function populateAvatarCarousel() {
 function populateAvatarGrid() {
     const grid = document.getElementById('avatar-grid');
     grid.innerHTML = '';
-
-    const filteredAvatars = activeCollection === 'ALL' ?
-        avatarData : avatarData.filter(a => a.collection === activeCollection);
+    const filteredAvatars = activeCollection === 'ALL' ? avatarData : avatarData.filter(a => a.collection === activeCollection);
 
     filteredAvatars.forEach((avatar) => {
         const item = document.createElement('div');
@@ -913,15 +806,12 @@ function populateAvatarGrid() {
             toggleGridView();
             loadAvatar(avatar);
         };
-
         const img = document.createElement('img');
         img.src = avatar.thumbnailUrl;
         img.alt = avatar.name;
-
         const name = document.createElement('div');
         name.className = 'grid-item-name';
         name.textContent = avatar.name;
-
         item.appendChild(img);
         item.appendChild(name);
         grid.appendChild(item);
@@ -930,16 +820,8 @@ function populateAvatarGrid() {
 
 function toggleGridView() {
     isGridView = !isGridView;
-    const gridContainer = document.getElementById('avatar-grid-container');
-    const mainLayout = document.getElementById('main-layout');
-
-    if (isGridView) {
-        gridContainer.style.display = 'block';
-        mainLayout.style.display = 'none';
-    } else {
-        gridContainer.style.display = 'none';
-        mainLayout.style.display = 'grid';
-    }
+    document.getElementById('avatar-grid-container').style.display = isGridView ? 'block' : 'none';
+    document.getElementById('main-layout').style.display = isGridView ? 'none' : 'grid';
 }
 
 function loadAvatar(avatar) {
@@ -951,39 +833,53 @@ function loadAvatar(avatar) {
         item.classList.toggle('active', avatarData.indexOf(avatar) === idx);
     });
 
-    // Update number grid
-    document.querySelectorAll('.number-cell').forEach((cell, idx) => {
-        cell.classList.toggle('active', idx === avatarData.indexOf(avatar));
-    });
-
     updateRightPanel(avatar);
     updateVideo(avatar);
     loadGLBModel(avatar.modelUrl);
 }
 
 function updateRightPanel(avatar) {
-    const avatarIndex = avatarData.indexOf(avatar) + 1;
-    document.getElementById('look-number').textContent = `LOOK.${avatarIndex.toString().padStart(2, '0')}`;
-    document.getElementById('avatar-name').textContent = avatar.name.toUpperCase();
+    document.getElementById('avatar-name-big').innerHTML = avatar.name.toUpperCase().replace(' ', '<br>');
 
-    // Update thumbnails
-    const thumbSection = document.getElementById('thumbnail-section');
-    thumbSection.innerHTML = '';
+    const tagsContainer = document.getElementById('avatar-tags');
+    tagsContainer.innerHTML = `
+        <div class="tag">FIT #${avatar.fitNo}</div>
+        <div class="tag">${avatar.collection.toUpperCase()}</div>
+        <div class="tag">PART ${avatar.id <= 7 ? '1' : avatar.id <= 17 ? '2' : '3'}</div>
+    `;
+
+    document.getElementById('brief-info').textContent = avatarBriefInfo[avatar.briefInfoId] || "No description available.";
+
+    const thumbsRow = document.getElementById('thumbnails-row');
+    thumbsRow.innerHTML = '';
     for (let i = 0; i < 3; i++) {
-        const thumbItem = document.createElement('div');
-        thumbItem.className = 'thumbnail-item';
+        const box = document.createElement('div');
+        box.className = 'thumbnail-box';
         const img = document.createElement('img');
         img.src = avatar.thumbnailUrl;
-        thumbItem.appendChild(img);
-        thumbSection.appendChild(thumbItem);
+        box.appendChild(img);
+        thumbsRow.appendChild(box);
     }
 
-    // Update tech info
-    document.getElementById('tech-info').innerHTML = `
-        FIT: #${avatar.fitNo}<br>
-        COLLECTION: ${avatar.collection}<br>
-        RUNWAY: ${avatar.runwayPart}
-    `;
+    const detailInfo = avatarDetailedInfo[avatar.name];
+    const detailBox = document.getElementById('detail-text-box');
+    if (detailInfo) {
+        detailBox.innerHTML = `
+            <h3>VISUAL DESIGN</h3>
+            <p>${detailInfo.visual}</p>
+            <h3>SOUND DESIGN</h3>
+            <p>${detailInfo.sound}</p>
+            <h3>CONCEPTUAL DEPTH</h3>
+            <p>${detailInfo.concept}</p>
+        `;
+    } else {
+        detailBox.innerHTML = `
+            <h3>INFORMATION</h3>
+            <p>Runway Part: ${avatar.runwayPart}</p>
+            <p>Fit Number: #${avatar.fitNo}</p>
+            <p>Collection: ${avatar.collection}</p>
+        `;
+    }
 }
 
 function updateVideo(avatar) {
@@ -1043,20 +939,15 @@ function setupEventListeners() {
         if (e.key === 'ArrowLeft') navigateAvatar(-1);
         if (e.key === 'ArrowRight') navigateAvatar(1);
     });
-
     document.getElementById('grid-toggle-button').addEventListener('click', toggleGridView);
 }
 
 function navigateAvatar(direction) {
-    const filteredAvatars = activeCollection === 'ALL' ?
-        avatarData : avatarData.filter(a => a.collection === activeCollection);
-
+    const filteredAvatars = activeCollection === 'ALL' ? avatarData : avatarData.filter(a => a.collection === activeCollection);
     const currentIndex = filteredAvatars.indexOf(activeAvatar);
     let newIndex = currentIndex + direction;
-
     if (newIndex < 0) newIndex = filteredAvatars.length - 1;
     if (newIndex >= filteredAvatars.length) newIndex = 0;
-
     loadAvatar(filteredAvatars[newIndex]);
 }
     </script>
