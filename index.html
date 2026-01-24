@@ -490,6 +490,11 @@ body {
 .loading-progress { width: 150px; height: 2px; background: rgba(255,255,255,0.2); }
 .progress-bar { height: 100%; background: #fff; width: 0%; transition: width 0.1s; } /* Beyaz */
 
+/* Mobile footer - hidden on desktop */
+.mobile-footer {
+    display: none;
+}
+
 /* GRID CONTAINER DÜZENLEMESİ: Bottom 0 yapıldı */
 .avatar-grid-container {
     position: absolute;
@@ -756,12 +761,17 @@ body {
         white-space: nowrap;
     }
 
-    /* Main layout: Single column stack */
+    /* Main layout: Single column stack with fixed height */
     .main-layout {
         grid-template-columns: 1fr;
         grid-template-rows: auto 1fr auto;
-        height: calc(100vh - 120px);
+        height: auto;
         padding: 0;
+        position: fixed;
+        top: 40px;
+        left: 0;
+        right: 0;
+        bottom: 90px; /* 60px carousel + 30px footer */
     }
 
     /* GLB Viewer: Square on top */
@@ -769,7 +779,7 @@ body {
         order: 1;
         aspect-ratio: 1/1;
         width: 100%;
-        max-height: 50vh;
+        flex-shrink: 0;
     }
 
     /* C2W2 overlay on mobile */
@@ -831,9 +841,8 @@ body {
         border-top: 1px solid rgba(255, 255, 255, 0.2);
         padding: 0;
         overflow-y: auto;
-        height: auto;
-        max-height: calc(50vh - 60px);
-        flex-shrink: 1;
+        flex: 1;
+        min-height: 0;
     }
 
     /* Make name sticky */
@@ -904,6 +913,7 @@ body {
     /* Bottom carousel: smaller, fixed */
     .bottom-section {
         height: 60px;
+        bottom: 30px !important; /* Above mobile footer */
     }
 
     .avatar-item {
@@ -920,15 +930,16 @@ body {
         font-size: 14px;
     }
 
-    /* Grid mode: 2x2 grid with more spacing */
+    /* Grid mode: 4 per row, responsive */
     .avatar-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 15px;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 8px;
     }
 
     .avatar-grid-container {
-        padding: 15px;
+        padding: 10px;
         top: 40px;
+        bottom: 30px !important; /* Space for footer */
     }
 
     /* Simplified grid item: image + name */
@@ -960,13 +971,41 @@ body {
     .grid-item-name-mobile {
         background: rgba(0, 0, 0, 0.9);
         color: #fff;
-        font-size: 8px;
+        font-size: 7px;
         text-align: center;
-        padding: 4px 2px;
+        padding: 3px 2px;
         border-top: 1px solid rgba(255, 255, 255, 0.3);
         font-family: 'Share Tech Mono', monospace;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.3px;
+        line-height: 1.2;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Mobile footer - show on mobile */
+    .mobile-footer {
+        position: fixed !important;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 30px;
+        background: rgba(0, 0, 0, 0.95);
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        font-family: 'Press Start 2P', monospace;
+        font-size: 6px;
+        color: rgba(255, 255, 255, 0.6);
+        letter-spacing: 2px;
+    }
+
+    /* Hide mobile footer in viewer mode */
+    .mobile-footer.viewer-mode {
+        display: none !important;
     }
 }
     </style>
@@ -1075,6 +1114,9 @@ body {
         <div class="carousel-nav next" id="carousel-next"><i class="fas fa-chevron-right"></i></div>
       </div>
     </div>
+
+    <!-- MOBILE FOOTER -->
+    <div class="mobile-footer viewer-mode" id="mobile-footer">DECENTRALIZE DESIGN</div>
 
     <script>
 // --- DATA VARIABLES ---
@@ -1453,21 +1495,33 @@ function toggleGridView() {
     const mainLayout = document.getElementById('main-layout');
     const toggleBtn = document.getElementById('grid-toggle-text-btn');
     const bottomSection = document.querySelector('.bottom-section');
+    const mobileFooter = document.getElementById('mobile-footer');
+    const isMobile = window.innerWidth <= 768;
 
     if (isGridView) {
         gridContainer.style.display = 'block';
         mainLayout.style.display = 'none';
-        bottomSection.style.display = 'none'; 
+        bottomSection.style.display = 'none';
         toggleBtn.textContent = "[ VIEWER ]";
         toggleBtn.style.color = "#fff";
         toggleBtn.style.borderColor = "#fff";
+
+        // Show mobile footer in grid mode
+        if (isMobile && mobileFooter) {
+            mobileFooter.classList.remove('viewer-mode');
+        }
     } else {
         gridContainer.style.display = 'none';
         mainLayout.style.display = 'grid';
-        bottomSection.style.display = 'flex'; 
+        bottomSection.style.display = 'flex';
         toggleBtn.textContent = "[ GRID VIEW ]";
-        toggleBtn.style.color = "#fff"; 
+        toggleBtn.style.color = "#fff";
         toggleBtn.style.borderColor = "rgba(255,255,255,0.4)";
+
+        // Hide mobile footer in viewer mode
+        if (mobileFooter) {
+            mobileFooter.classList.add('viewer-mode');
+        }
     }
 }
 
