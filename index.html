@@ -495,6 +495,133 @@ body {
     display: none;
 }
 
+/* --- UNIVERSAL VIEWER POP-UP --- */
+.viewer-popup {
+    position: fixed;
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+    z-index: 10000;
+    display: none;
+    flex-direction: column;
+    min-width: 400px;
+    min-height: 300px;
+    resize: both;
+    overflow: hidden;
+}
+
+.viewer-popup.active {
+    display: flex;
+}
+
+.viewer-popup.fullscreen {
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    resize: none;
+}
+
+/* Viewer Title Bar */
+.viewer-titlebar {
+    background: rgba(0, 0, 0, 0.98);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+    user-select: none;
+}
+
+.viewer-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.viewer-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.viewer-btn {
+    width: 18px;
+    height: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.viewer-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #fff;
+}
+
+/* Viewer Tabs */
+.viewer-tabs {
+    display: flex;
+    background: rgba(0, 0, 0, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.viewer-tab {
+    padding: 8px 16px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.6);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.viewer-tab:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.viewer-tab.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border-bottom: 2px solid #fff;
+}
+
+/* Viewer Content */
+.viewer-display {
+    flex: 1;
+    overflow: auto;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.viewer-display iframe,
+.viewer-display video,
+.viewer-display img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border: none;
+}
+
+.viewer-display video {
+    filter: grayscale(0.3) contrast(1.1);
+}
+
+.viewer-display img {
+    filter: grayscale(0.2) contrast(1.15);
+}
+
 /* GRID CONTAINER DÜZENLEMESİ: Bottom 0 yapıldı */
 .avatar-grid-container {
     position: absolute;
@@ -1066,10 +1193,11 @@ body {
           </div>
 
           <div class="tech-icons-section">
-            <div class="tech-icon"><i class="fas fa-crosshairs"></i></div>
-            <div class="tech-icon"><i class="fas fa-wifi"></i></div>
-            <div class="tech-icon"><i class="fas fa-cube"></i></div>
-            <div class="tech-icon"><i class="fas fa-qrcode"></i></div>
+            <div class="tech-icon" onclick="openViewer('image')" title="Image Viewer"><i class="fas fa-image"></i></div>
+            <div class="tech-icon" onclick="openViewer('video-mp4')" title="Video Viewer"><i class="fas fa-video"></i></div>
+            <div class="tech-icon" onclick="openViewer('html')" title="HTML Viewer"><i class="fas fa-code"></i></div>
+            <div class="tech-icon" onclick="openViewer('web')" title="Web Viewer"><i class="fas fa-globe"></i></div>
+            <div class="tech-icon" onclick="openViewer('video-yt')" title="YouTube Viewer"><i class="fab fa-youtube"></i></div>
           </div>
         </div>
 
@@ -1117,6 +1245,31 @@ body {
 
     <!-- MOBILE FOOTER -->
     <div class="mobile-footer viewer-mode" id="mobile-footer">DECENTRALIZE DESIGN</div>
+
+    <!-- UNIVERSAL VIEWER POP-UP -->
+    <div class="viewer-popup" id="viewer-popup">
+        <div class="viewer-titlebar" id="viewer-titlebar">
+            <div class="viewer-title">UNIVERSAL VIEWER</div>
+            <div class="viewer-controls">
+                <div class="viewer-btn" id="viewer-fullscreen" title="Fullscreen">
+                    <i class="fas fa-expand"></i>
+                </div>
+                <div class="viewer-btn" id="viewer-close" title="Close">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+        </div>
+        <div class="viewer-tabs" id="viewer-tabs">
+            <div class="viewer-tab active" data-type="image">IMAGE</div>
+            <div class="viewer-tab" data-type="video-mp4">VIDEO</div>
+            <div class="viewer-tab" data-type="video-yt">YOUTUBE</div>
+            <div class="viewer-tab" data-type="web">WEB</div>
+            <div class="viewer-tab" data-type="html">HTML</div>
+        </div>
+        <div class="viewer-display" id="viewer-display">
+            <!-- Content will be loaded here -->
+        </div>
+    </div>
 
     <script>
 // --- DATA VARIABLES ---
@@ -1706,6 +1859,181 @@ function navigateAvatar(direction) {
     
     loadAvatar(filteredAvatars[newIndex]);
 }
+
+// --- UNIVERSAL VIEWER SYSTEM ---
+
+const viewerData = {
+    'image': {
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop'
+    },
+    'video-mp4': {
+        type: 'video',
+        url: 'https://www.w3schools.com/html/mov_bbb.mp4'
+    },
+    'video-yt': {
+        type: 'video',
+        url: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+    },
+    'web': {
+        type: 'web',
+        url: 'https://en.wikipedia.org/wiki/Main_Page'
+    },
+    'html': {
+        type: 'html',
+        content: '<div style="padding:40px; color: #00ff9d; font-family: monospace; background: #000;"><h1 style="font-size: 24px; margin-bottom: 20px;">C2W2 SYSTEM</h1><p style="line-height: 1.8;">This is rendered HTML content.</p><button style="padding:10px 20px; background:#fff; color:#000; border:none; cursor:pointer; margin-top: 20px;">EXECUTE</button></div>'
+    }
+};
+
+let viewerIsFullscreen = false;
+let viewerDragOffset = { x: 0, y: 0 };
+
+function openViewer(type) {
+    const popup = document.getElementById('viewer-popup');
+    popup.classList.add('active');
+
+    // Random position (not fullscreen)
+    if (!viewerIsFullscreen) {
+        const maxX = window.innerWidth - 500;
+        const maxY = window.innerHeight - 400;
+        const randomX = Math.max(50, Math.random() * maxX);
+        const randomY = Math.max(50, Math.random() * maxY);
+
+        popup.style.left = randomX + 'px';
+        popup.style.top = randomY + 'px';
+        popup.style.width = '600px';
+        popup.style.height = '500px';
+    }
+
+    switchViewerTab(type);
+}
+
+function closeViewer() {
+    const popup = document.getElementById('viewer-popup');
+    popup.classList.remove('active');
+    viewerIsFullscreen = false;
+    popup.classList.remove('fullscreen');
+
+    const fullscreenBtn = document.getElementById('viewer-fullscreen');
+    fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+}
+
+function toggleViewerFullscreen() {
+    const popup = document.getElementById('viewer-popup');
+    const fullscreenBtn = document.getElementById('viewer-fullscreen');
+
+    viewerIsFullscreen = !viewerIsFullscreen;
+
+    if (viewerIsFullscreen) {
+        popup.classList.add('fullscreen');
+        fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+    } else {
+        popup.classList.remove('fullscreen');
+        fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+    }
+}
+
+function switchViewerTab(type) {
+    // Update active tab
+    const tabs = document.querySelectorAll('.viewer-tab');
+    tabs.forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.getAttribute('data-type') === type) {
+            tab.classList.add('active');
+        }
+    });
+
+    // Render content
+    renderViewerContent(type);
+}
+
+function renderViewerContent(type) {
+    const display = document.getElementById('viewer-display');
+    display.innerHTML = '';
+
+    const data = viewerData[type];
+    if (!data) return;
+
+    let contentHTML = '';
+
+    switch (data.type) {
+        case 'image':
+            contentHTML = `<img src="${data.url}" alt="Image">`;
+            break;
+
+        case 'video':
+            if (data.url.includes('youtube.com') || data.url.includes('youtu.be')) {
+                contentHTML = `<iframe src="${data.url}" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>`;
+            } else {
+                contentHTML = `<video controls autoplay playsinline><source src="${data.url}" type="video/mp4"></video>`;
+            }
+            break;
+
+        case 'web':
+            contentHTML = `<iframe src="${data.url}" sandbox="allow-scripts allow-same-origin allow-popups" referrerpolicy="no-referrer"></iframe>`;
+            break;
+
+        case 'html':
+            const blob = new Blob([data.content], { type: 'text/html' });
+            const blobURL = URL.createObjectURL(blob);
+            contentHTML = `<iframe src="${blobURL}"></iframe>`;
+            break;
+
+        default:
+            contentHTML = '<p style="color: rgba(255,255,255,0.5); font-family: monospace;">UNSUPPORTED FORMAT</p>';
+    }
+
+    display.innerHTML = contentHTML;
+}
+
+// Make viewer draggable
+function initViewerDrag() {
+    const popup = document.getElementById('viewer-popup');
+    const titlebar = document.getElementById('viewer-titlebar');
+
+    let isDragging = false;
+
+    titlebar.addEventListener('mousedown', (e) => {
+        if (viewerIsFullscreen) return;
+        isDragging = true;
+
+        const rect = popup.getBoundingClientRect();
+        viewerDragOffset.x = e.clientX - rect.left;
+        viewerDragOffset.y = e.clientY - rect.top;
+
+        titlebar.style.cursor = 'grabbing';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging || viewerIsFullscreen) return;
+
+        const x = e.clientX - viewerDragOffset.x;
+        const y = e.clientY - viewerDragOffset.y;
+
+        popup.style.left = x + 'px';
+        popup.style.top = y + 'px';
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+        titlebar.style.cursor = 'move';
+    });
+}
+
+// Viewer event listeners
+document.getElementById('viewer-close').addEventListener('click', closeViewer);
+document.getElementById('viewer-fullscreen').addEventListener('click', toggleViewerFullscreen);
+
+// Tab click handlers
+document.querySelectorAll('.viewer-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        const type = tab.getAttribute('data-type');
+        switchViewerTab(type);
+    });
+});
+
+// Initialize drag
+initViewerDrag();
     </script>
   </body>
 </html>
