@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>C2W2 INDUSTRIAL STUDIO</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
 /* --- RESET & FONTS --- */
 * {
@@ -142,7 +142,7 @@ body {
 }
 
 .collection-btn:hover { background-color: rgba(255, 255, 255, 0.1); }
-.collection-btn.active { background-color: rgba(255, 255, 255, 0.3); border-color: #fff; color: #fff; } /* Mavi kaldırıldı */
+.collection-btn.active { background-color: #fff; border-color: #fff; color: #000; }
 
 /* --- MAIN LAYOUT GRID --- */
 .main-layout {
@@ -350,6 +350,11 @@ body {
     gap: 20px;
 }
 
+/* Hide name section in right panel on desktop */
+.right-info-panel .avatar-name-section {
+    display: none;
+}
+
 .detail-text-box { padding: 0; background: transparent; }
 
 .detail-text-box h3 {
@@ -465,10 +470,18 @@ body {
     z-index: 5;
 }
 
-.avatar-thumbnail { 
-    width: 100%; 
-    height: 100%; 
+.avatar-thumbnail {
+    width: 100%;
+    height: 100%;
     object-fit: contain; /* ASLA KESİLMEZ (CROP OLMAZ) */
+    filter: grayscale(0.8) brightness(0.9) contrast(1.1);
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+.avatar-item.active .avatar-thumbnail {
+    filter: grayscale(0.3) brightness(1.1) contrast(1.2);
 }
 
 /* --- LOADING & GRID VIEW --- */
@@ -477,25 +490,639 @@ body {
 .loading-progress { width: 150px; height: 2px; background: rgba(255,255,255,0.2); }
 .progress-bar { height: 100%; background: #fff; width: 0%; transition: width 0.1s; } /* Beyaz */
 
-/* GRID CONTAINER DÜZENLEMESİ: Bottom 0 yapıldı */
-.avatar-grid-container { 
-    position: absolute; 
-    top: 45px; 
-    left: 0; 
-    right: 0; 
-    bottom: 0; 
-    padding: 20px; 
-    overflow-y: auto; 
-    z-index: 100; 
-    background-color: rgba(5, 5, 5, 0.98); 
-    display: none; 
+/* Mobile footer - hidden on desktop */
+.mobile-footer {
+    display: none;
 }
-.avatar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; }
-.grid-item { width: 100%; aspect-ratio: 1; cursor: pointer; position: relative; border: 1px solid #333; }
-.grid-item img { width: 100%; height: 100%; object-fit: contain; background: #000; filter: grayscale(1); transition: 0.3s; }
-.grid-item:hover { border-color: #fff; } /* Beyaz */
-.grid-item:hover img { filter: grayscale(0); }
-.grid-item-name { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.8); color: #fff; font-size: 9px; text-align: center; padding: 5px; }
+
+/* --- UNIVERSAL VIEWER POP-UP --- */
+.viewer-popup {
+    position: fixed;
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+    z-index: 10000;
+    display: none;
+    flex-direction: column;
+    min-width: 400px;
+    min-height: 300px;
+    resize: both;
+    overflow: hidden;
+}
+
+.viewer-popup.active {
+    display: flex;
+}
+
+.viewer-popup.fullscreen {
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    resize: none;
+}
+
+/* Viewer Title Bar */
+.viewer-titlebar {
+    background: rgba(0, 0, 0, 0.98);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+    user-select: none;
+}
+
+.viewer-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.viewer-controls {
+    display: flex;
+    gap: 6px;
+}
+
+.viewer-btn {
+    width: 20px;
+    height: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.viewer-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #fff;
+}
+
+/* Viewer Content */
+.viewer-display {
+    flex: 1;
+    overflow: auto;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+}
+
+.viewer-display iframe,
+.viewer-display video,
+.viewer-display img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border: none;
+}
+
+.viewer-display video {
+    filter: grayscale(0.3) contrast(1.1);
+}
+
+.viewer-display img {
+    filter: grayscale(0.2) contrast(1.15);
+}
+
+/* Viewer Description */
+.viewer-description {
+    background: rgba(0, 0, 0, 0.95);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 12px 15px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.7);
+    max-height: 80px;
+    overflow: hidden;
+}
+
+.viewer-popup.fullscreen .viewer-description {
+    display: none;
+}
+
+/* GRID CONTAINER DÜZENLEMESİ: Bottom 0 yapıldı */
+.avatar-grid-container {
+    position: absolute;
+    top: 45px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 30px;
+    overflow-y: auto;
+    z-index: 100;
+    background-color: rgba(5, 5, 5, 0.98);
+    display: none;
+}
+
+/* BLADE RUNNER ID CARD GRID */
+.avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    max-width: 1800px;
+    margin: 0 auto;
+}
+
+/* KEYFRAMES: Animated Noise */
+@keyframes gridNoise {
+    0% { opacity: 0.3; transform: translateY(0); }
+    25% { opacity: 0.5; transform: translateY(-2px); }
+    50% { opacity: 0.4; transform: translateY(2px); }
+    75% { opacity: 0.6; transform: translateY(-1px); }
+    100% { opacity: 0.3; transform: translateY(0); }
+}
+
+/* ID CARD KÜNYE */
+.grid-item {
+    background: rgba(10, 10, 10, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+    opacity: 0.6; /* Default dark */
+}
+
+.grid-item:hover {
+    opacity: 1 !important; /* Parlat */
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    transform: translateY(-4px);
+}
+
+/* C2W2 HEADER */
+.grid-item-header {
+    background: #000;
+    padding: 8px 12px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.grid-item-lapd {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: #fff;
+    letter-spacing: 2px;
+}
+
+.grid-item-signal {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 7px;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 1px;
+}
+
+/* AGENT NAME */
+.grid-item-agent {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 6px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.grid-item-agent-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 7px;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+.grid-item-name {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: #fff;
+    letter-spacing: 1px;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+
+/* MAIN CONTENT AREA */
+.grid-item-content {
+    display: flex;
+    padding: 15px;
+    gap: 15px;
+    flex: 1;
+}
+
+/* THUMBNAIL WITH FILTER */
+.grid-item-thumbnail-wrapper {
+    width: 140px;
+    height: 180px;
+    flex-shrink: 0;
+    position: relative;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: #000;
+    overflow: hidden;
+}
+
+.grid-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.5) contrast(0.4) saturate(0);
+    image-rendering: pixelated;
+    transition: 0.3s;
+}
+
+.grid-item:hover img {
+    filter: brightness(1.1) contrast(1.2) saturate(0.9);
+}
+
+/* Animated Noise Overlay */
+.grid-item-thumbnail-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255, 255, 255, 0.08) 0px,
+            transparent 1px,
+            transparent 2px,
+            rgba(255, 255, 255, 0.08) 3px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.08) 0px,
+            transparent 1px,
+            transparent 2px,
+            rgba(255, 255, 255, 0.08) 3px
+        );
+    pointer-events: none;
+    animation: gridNoise 1.5s ease-in-out infinite;
+}
+
+/* INFO SECTION (Right side) */
+.grid-item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* TAGS */
+.grid-item-tags {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.grid-item-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px;
+    color: #fff;
+    letter-spacing: 1px;
+    padding: 3px 0;
+    border-left: 2px solid #fff;
+    padding-left: 8px;
+}
+
+/* DESCRIPTION */
+.grid-item-description {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px; /* Büyütüldü 7px -> 10px */
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    flex: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+}
+
+/* FOOTER */
+.grid-item-footer {
+    background: #000;
+    padding: 8px 12px;
+    border-top: 2px solid rgba(255, 255, 255, 0.4);
+    text-align: center;
+}
+
+.grid-item-footer-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    color: #fff;
+    letter-spacing: 2px;
+}
+
+/* RESPONSIVE: Ekran daralınca kart boyutu ve adet ayarla */
+@media (max-width: 1800px) {
+    .avatar-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (max-width: 1400px) {
+    .avatar-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 1000px) {
+    .avatar-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .grid-item-thumbnail-wrapper { width: 120px; height: 160px; }
+}
+
+@media (max-width: 700px) {
+    .avatar-grid { grid-template-columns: 1fr; }
+    .avatar-grid-container { padding: 15px; }
+}
+
+/* MOBILE RESPONSIVE (768px ve altı) */
+@media (max-width: 768px) {
+    /* Hide collections filter */
+    .collections {
+        display: none !important;
+    }
+
+    /* Top bar simplified */
+    .top-section {
+        height: 40px;
+        padding: 0 10px;
+        justify-content: flex-start;
+        gap: 10px;
+        flex-wrap: nowrap;
+        overflow: hidden;
+    }
+
+    .title {
+        display: none;
+    }
+
+    .center-menu {
+        flex: 0;
+        justify-content: flex-start;
+    }
+
+    .grid-toggle-text-btn {
+        font-size: 8px;
+        padding: 3px 8px;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+
+    /* Main layout: Single column stack with fixed height */
+    .main-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+        height: auto;
+        padding: 0;
+        position: fixed;
+        top: 40px;
+        left: 0;
+        right: 0;
+        bottom: 90px; /* 60px carousel + 30px footer */
+    }
+
+    /* GLB Viewer: Square on top */
+    .center-viewer-section {
+        order: 1;
+        aspect-ratio: 1/1;
+        width: 100%;
+        flex-shrink: 0;
+    }
+
+    /* C2W2 overlay on mobile */
+    .center-viewer-section::after {
+        content: 'C2W2';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-family: 'Press Start 2P', monospace;
+        font-size: 24px;
+        color: rgba(255, 255, 255, 0.1);
+        letter-spacing: 4px;
+        z-index: 8;
+        pointer-events: none;
+    }
+
+    /* Video: Small overlay on GLB top-left (wireframe hizalaması) */
+    .left-video-section {
+        order: 1;
+        position: absolute;
+        top: 60px; /* wireframe top: 20px + top-section: 40px */
+        left: 30px; /* wireframe left: 20px + 10px */
+        width: 80px;
+        height: auto;
+        z-index: 20;
+        background: rgba(0, 0, 0, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-right: none;
+    }
+
+    .video-wrapper {
+        width: 100%;
+        margin: 0;
+        aspect-ratio: 9/16;
+    }
+
+    /* Video wireframe overlay hizalama */
+    .left-video-section .wireframe-overlay {
+        top: 3px !important;
+        left: 3px !important;
+        right: 3px !important;
+        bottom: 3px !important;
+    }
+
+    .video-header {
+        display: none;
+    }
+
+    .left-info-content,
+    .tech-icons-section {
+        display: none;
+    }
+
+    /* Info Panel: Below GLB, scrollable */
+    .right-info-panel {
+        order: 2;
+        border-left: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 0;
+        overflow-y: auto;
+        flex: 1;
+        min-height: 0;
+    }
+
+    /* Make name sticky */
+    .right-info-panel .avatar-name-section {
+        position: sticky;
+        top: 0;
+        background: rgba(0, 0, 0, 0.98);
+        z-index: 5;
+        padding: 12px 15px;
+        margin: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        display: block;
+    }
+
+    .right-info-panel .avatar-name-big {
+        font-size: 16px;
+        line-height: 1.3;
+    }
+
+    /* Tags section on mobile */
+    .right-info-panel .avatar-tags-mobile {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 12px 15px;
+        background: rgba(0, 0, 0, 0.8);
+    }
+
+    .right-info-panel .tag-mobile {
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        padding: 5px 10px;
+        font-size: 10px;
+        color: #fff;
+        text-transform: uppercase;
+        font-weight: 700;
+        background: rgba(255,255,255,0.05);
+        font-family: "Share Tech Mono", monospace;
+    }
+
+    /* Description on mobile */
+    .right-info-panel .brief-info-mobile {
+        font-size: 11px;
+        line-height: 1.6;
+        color: #ccc;
+        padding: 15px;
+        font-family: "Share Tech Mono", monospace;
+    }
+
+    /* Detail box on mobile */
+    .right-info-panel .detail-text-box {
+        padding: 0 15px 15px 15px;
+    }
+
+    .right-info-panel .detail-text-box h3 {
+        font-size: 10px;
+        margin-top: 15px;
+    }
+
+    .right-info-panel .detail-text-box p {
+        font-size: 10px;
+    }
+
+    /* Hide desktop name section on mobile */
+    .left-video-section .avatar-name-section {
+        display: none !important;
+    }
+
+    /* Bottom carousel: smaller, fixed */
+    .bottom-section {
+        height: 60px;
+        bottom: 30px !important; /* Above mobile footer */
+    }
+
+    .avatar-item {
+        width: 40px;
+        height: 40px;
+    }
+
+    .avatar-item.active {
+        transform: scale(1.2);
+    }
+
+    .carousel-nav {
+        width: 30px;
+        font-size: 14px;
+    }
+
+    /* Grid mode: 4 per row, responsive */
+    .avatar-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 8px;
+    }
+
+    .avatar-grid-container {
+        padding: 10px;
+        top: 40px;
+        bottom: 30px !important; /* Space for footer */
+    }
+
+    /* Simplified grid item: image + name */
+    .grid-item {
+        aspect-ratio: 1/1;
+        padding: 0;
+        background: #000;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        flex-direction: column;
+        opacity: 1 !important; /* No hover effect on mobile */
+    }
+
+    .grid-item-agent,
+    .grid-item-content {
+        display: none;
+    }
+
+    /* Mobile grid images - no hover, normal contrast */
+    .grid-item img {
+        width: 100%;
+        flex: 1;
+        object-fit: cover;
+        filter: grayscale(1) brightness(1) contrast(1.2) !important;
+        transition: none !important;
+    }
+
+    /* Mobile grid item name */
+    .grid-item-name-mobile {
+        background: rgba(0, 0, 0, 0.9);
+        color: #fff;
+        font-size: 7px;
+        text-align: center;
+        padding: 3px 2px;
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        font-family: 'Share Tech Mono', monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        line-height: 1.2;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Mobile footer - show on mobile */
+    .mobile-footer {
+        position: fixed !important;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 30px;
+        background: rgba(0, 0, 0, 0.95);
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        font-family: 'Press Start 2P', monospace;
+        font-size: 6px;
+        color: rgba(255, 255, 255, 0.6);
+        letter-spacing: 2px;
+    }
+
+    /* Hide mobile footer in viewer mode */
+    .mobile-footer.viewer-mode {
+        display: none !important;
+    }
+}
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -554,10 +1181,11 @@ body {
           </div>
 
           <div class="tech-icons-section">
-            <div class="tech-icon"><i class="fas fa-crosshairs"></i></div>
-            <div class="tech-icon"><i class="fas fa-wifi"></i></div>
-            <div class="tech-icon"><i class="fas fa-cube"></i></div>
-            <div class="tech-icon"><i class="fas fa-qrcode"></i></div>
+            <div class="tech-icon" onclick="openViewer('image')" title="Image Viewer"><i class="fas fa-image"></i></div>
+            <div class="tech-icon" onclick="openViewer('video-mp4')" title="Video Viewer"><i class="fas fa-video"></i></div>
+            <div class="tech-icon" onclick="openViewer('html')" title="HTML Viewer"><i class="fas fa-code"></i></div>
+            <div class="tech-icon" onclick="openViewer('web')" title="Web Viewer"><i class="fas fa-globe"></i></div>
+            <div class="tech-icon" onclick="openViewer('video-yt')" title="YouTube Viewer"><i class="fab fa-youtube"></i></div>
           </div>
         </div>
 
@@ -586,6 +1214,9 @@ body {
         </div>
 
         <div class="right-info-panel">
+          <div class="avatar-name-section">
+            <div class="avatar-name-big" id="avatar-name-big-right">NEUE DOJO<br>CURATOR</div>
+          </div>
           <div class="detail-text-box" id="detail-text-box"></div>
         </div>
       </div>
@@ -598,6 +1229,33 @@ body {
         </div>
         <div class="carousel-nav next" id="carousel-next"><i class="fas fa-chevron-right"></i></div>
       </div>
+    </div>
+
+    <!-- MOBILE FOOTER -->
+    <div class="mobile-footer viewer-mode" id="mobile-footer">DECENTRALIZE DESIGN</div>
+
+    <!-- UNIVERSAL VIEWER POP-UP -->
+    <div class="viewer-popup" id="viewer-popup">
+        <div class="viewer-titlebar" id="viewer-titlebar">
+            <div class="viewer-title" id="viewer-title">UNIVERSAL VIEWER</div>
+            <div class="viewer-controls">
+                <div class="viewer-btn" id="viewer-newtab" title="Open in New Tab">
+                    <i class="fas fa-external-link-alt"></i>
+                </div>
+                <div class="viewer-btn" id="viewer-fullscreen" title="Fullscreen">
+                    <i class="fas fa-expand"></i>
+                </div>
+                <div class="viewer-btn" id="viewer-close" title="Close">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+        </div>
+        <div class="viewer-display" id="viewer-display">
+            <!-- Content will be loaded here -->
+        </div>
+        <div class="viewer-description" id="viewer-description">
+            Description will appear here
+        </div>
     </div>
 
     <script>
@@ -813,15 +1471,20 @@ function onWindowResize() {
     camera.updateProjectionMatrix();
 
     renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-    
+
     pixelRenderer.setSize(
-        canvasContainer.clientWidth * CONFIG.viewer.pixelFactor, 
-        canvasContainer.clientHeight * CONFIG.viewer.pixelFactor, 
+        canvasContainer.clientWidth * CONFIG.viewer.pixelFactor,
+        canvasContainer.clientHeight * CONFIG.viewer.pixelFactor,
         false
     );
-    
+
     // Carousel'ı ekran boyutuna göre güncelle
     renderCircularCarousel();
+
+    // Grid'i yeniden render et (mobile/desktop geçişlerinde)
+    if (isGridView) {
+        populateAvatarGrid();
+    }
 }
 
 function populateCollectionButtons() {
@@ -910,6 +1573,8 @@ function populateAvatarGrid() {
     grid.innerHTML = '';
     const filteredAvatars = activeCollection === 'ALL' ? avatarData : avatarData.filter(a => a.collection === activeCollection);
 
+    const isMobile = window.innerWidth <= 768;
+
     filteredAvatars.forEach((avatar) => {
         const item = document.createElement('div');
         item.className = 'grid-item';
@@ -917,14 +1582,49 @@ function populateAvatarGrid() {
             toggleGridView();
             loadAvatar(avatar);
         };
-        const img = document.createElement('img');
-        img.src = avatar.thumbnailUrl;
-        img.alt = avatar.name;
-        const name = document.createElement('div');
-        name.className = 'grid-item-name';
-        name.textContent = avatar.name;
-        item.appendChild(img);
-        item.appendChild(name);
+
+        if (isMobile) {
+            // Mobile: image + name, no hover
+            const img = document.createElement('img');
+            img.src = avatar.thumbnailUrl;
+            img.alt = avatar.name;
+
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'grid-item-name-mobile';
+            nameDiv.textContent = avatar.name.toUpperCase();
+
+            item.appendChild(img);
+            item.appendChild(nameDiv);
+        } else {
+            // Desktop: full card
+            const briefDesc = avatarBriefInfo[avatar.name] || "No description available.";
+            const tags = [
+                `FIT #${avatar.fitNo}`,
+                avatar.collection.toUpperCase(),
+                `PART ${avatar.id <= 7 ? '1' : avatar.id <= 17 ? '2' : '3'}`
+            ];
+
+            item.innerHTML = `
+                <div class="grid-item-agent">
+                    <div class="grid-item-agent-label">AGENT</div>
+                    <div class="grid-item-name">${avatar.name.toUpperCase()}</div>
+                </div>
+
+                <div class="grid-item-content">
+                    <div class="grid-item-thumbnail-wrapper">
+                        <img src="${avatar.thumbnailUrl}" alt="${avatar.name}">
+                    </div>
+
+                    <div class="grid-item-info">
+                        <div class="grid-item-tags">
+                            ${tags.map(tag => `<div class="grid-item-tag">${tag}</div>`).join('')}
+                        </div>
+                        <div class="grid-item-description">${briefDesc}</div>
+                    </div>
+                </div>
+            `;
+        }
+
         grid.appendChild(item);
     });
 }
@@ -935,21 +1635,33 @@ function toggleGridView() {
     const mainLayout = document.getElementById('main-layout');
     const toggleBtn = document.getElementById('grid-toggle-text-btn');
     const bottomSection = document.querySelector('.bottom-section');
+    const mobileFooter = document.getElementById('mobile-footer');
+    const isMobile = window.innerWidth <= 768;
 
     if (isGridView) {
         gridContainer.style.display = 'block';
         mainLayout.style.display = 'none';
-        bottomSection.style.display = 'none'; 
+        bottomSection.style.display = 'none';
         toggleBtn.textContent = "[ VIEWER ]";
         toggleBtn.style.color = "#fff";
         toggleBtn.style.borderColor = "#fff";
+
+        // Show mobile footer in grid mode
+        if (isMobile && mobileFooter) {
+            mobileFooter.classList.remove('viewer-mode');
+        }
     } else {
         gridContainer.style.display = 'none';
         mainLayout.style.display = 'grid';
-        bottomSection.style.display = 'flex'; 
+        bottomSection.style.display = 'flex';
         toggleBtn.textContent = "[ GRID VIEW ]";
-        toggleBtn.style.color = "#fff"; 
+        toggleBtn.style.color = "#fff";
         toggleBtn.style.borderColor = "rgba(255,255,255,0.4)";
+
+        // Hide mobile footer in viewer mode
+        if (mobileFooter) {
+            mobileFooter.classList.add('viewer-mode');
+        }
     }
 }
 
@@ -969,7 +1681,16 @@ function loadAvatar(avatar) {
 }
 
 function updateRightPanel(avatar) {
+    const isMobile = window.innerWidth <= 768;
+
+    // Update left panel name
     document.getElementById('avatar-name-big').innerHTML = avatar.name.toUpperCase().replace(' ', '<br>');
+
+    // Update right panel name (for mobile)
+    const rightNameEl = document.getElementById('avatar-name-big-right');
+    if (rightNameEl) {
+        rightNameEl.innerHTML = avatar.name.toUpperCase().replace(' ', '<br>');
+    }
 
     const tagsContainer = document.getElementById('avatar-tags');
     tagsContainer.innerHTML = `
@@ -981,24 +1702,63 @@ function updateRightPanel(avatar) {
     document.getElementById('brief-info').textContent = avatarBriefInfo[avatar.name] || "No description available.";
 
     const detailInfo = avatarDetailedInfo[avatar.name] || avatarDetailedInfo[Object.keys(avatarDetailedInfo).find(key => key.includes(avatar.name) || avatar.name.includes(key))];
-    
+
     const detailBox = document.getElementById('detail-text-box');
-    if (detailInfo) {
-        detailBox.innerHTML = `
-            <h3>VISUAL DESIGN</h3>
-            <p>${detailInfo.visual}</p>
-            <h3>SOUND DESIGN</h3>
-            <p>${detailInfo.sound}</p>
-            <h3>CONCEPTUAL DEPTH</h3>
-            <p>${detailInfo.concept}</p>
+
+    // Mobile: Add tags and brief info to detail box
+    if (isMobile) {
+        const briefDesc = avatarBriefInfo[avatar.name] || "No description available.";
+        const tags = [
+            `FIT #${avatar.fitNo}`,
+            avatar.collection.toUpperCase(),
+            `PART ${avatar.id <= 7 ? '1' : avatar.id <= 17 ? '2' : '3'}`
+        ];
+
+        let mobileContent = `
+            <div class="avatar-tags-mobile">
+                ${tags.map(tag => `<div class="tag-mobile">${tag}</div>`).join('')}
+            </div>
+            <div class="brief-info-mobile">${briefDesc}</div>
         `;
+
+        if (detailInfo) {
+            mobileContent += `
+                <h3>VISUAL DESIGN</h3>
+                <p>${detailInfo.visual}</p>
+                <h3>SOUND DESIGN</h3>
+                <p>${detailInfo.sound}</p>
+                <h3>CONCEPTUAL DEPTH</h3>
+                <p>${detailInfo.concept}</p>
+            `;
+        } else {
+            mobileContent += `
+                <h3>INFORMATION</h3>
+                <p>Runway Part: ${avatar.runwayPart}</p>
+                <p>Fit Number: #${avatar.fitNo}</p>
+                <p>Collection: ${avatar.collection}</p>
+            `;
+        }
+
+        detailBox.innerHTML = mobileContent;
     } else {
-        detailBox.innerHTML = `
-            <h3>INFORMATION</h3>
-            <p>Runway Part: ${avatar.runwayPart}</p>
-            <p>Fit Number: #${avatar.fitNo}</p>
-            <p>Collection: ${avatar.collection}</p>
-        `;
+        // Desktop: standard layout
+        if (detailInfo) {
+            detailBox.innerHTML = `
+                <h3>VISUAL DESIGN</h3>
+                <p>${detailInfo.visual}</p>
+                <h3>SOUND DESIGN</h3>
+                <p>${detailInfo.sound}</p>
+                <h3>CONCEPTUAL DEPTH</h3>
+                <p>${detailInfo.concept}</p>
+            `;
+        } else {
+            detailBox.innerHTML = `
+                <h3>INFORMATION</h3>
+                <p>Runway Part: ${avatar.runwayPart}</p>
+                <p>Fit Number: #${avatar.fitNo}</p>
+                <p>Collection: ${avatar.collection}</p>
+            `;
+        }
     }
 }
 
@@ -1086,6 +1846,223 @@ function navigateAvatar(direction) {
     
     loadAvatar(filteredAvatars[newIndex]);
 }
+
+// --- UNIVERSAL VIEWER SYSTEM ---
+
+const viewerData = {
+    'image': {
+        type: 'image',
+        title: 'IMAGE VIEWER',
+        url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop',
+        newTabUrl: 'https://unsplash.com/photos/abstract-art-1618005182384',
+        description: 'High-resolution abstract imagery. Experimental visual data stream from decentralized nodes. Color spectrum analysis in progress.'
+    },
+    'video-mp4': {
+        type: 'video',
+        title: 'VIDEO PLAYER',
+        url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+        newTabUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+        description: 'MP4 video playback module. Supports H.264 codec. Timeline manipulation enabled. Frame-by-frame analysis available.'
+    },
+    'video-yt': {
+        type: 'video',
+        title: 'YOUTUBE STREAM',
+        url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+        newTabUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        description: 'External video streaming interface. Embedded player with network latency compensation. Auto-quality adjustment protocol active.'
+    },
+    'web': {
+        type: 'web',
+        title: 'WEB BROWSER',
+        url: 'https://en.wikipedia.org/wiki/Main_Page',
+        newTabUrl: 'https://en.wikipedia.org/wiki/Main_Page',
+        description: 'Sandboxed web viewport. External content rendering engine. Cross-origin resource sharing policies enforced. Limited interaction mode.'
+    },
+    'html': {
+        type: 'html',
+        title: 'HTML RENDERER',
+        content: '<div style="padding:40px; color: #fff; font-family: monospace; background: #000;"><h1 style="font-size: 24px; margin-bottom: 20px; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px;">C2W2 SYSTEM</h1><p style="line-height: 1.8; margin-bottom: 15px;">This is rendered HTML content in an isolated environment.</p><p style="line-height: 1.8; color: rgba(255,255,255,0.7);">Custom markup injection supported. JavaScript execution permitted in sandbox context.</p><button style="padding:10px 20px; background:#fff; color:#000; border:2px solid #fff; cursor:pointer; margin-top: 20px; font-family: monospace; font-weight: bold;">EXECUTE COMMAND</button></div>',
+        newTabUrl: 'about:blank',
+        description: 'Raw HTML interpreter. Isolated execution environment. Custom CSS and JavaScript support. Real-time DOM manipulation enabled.'
+    }
+};
+
+let viewerIsFullscreen = false;
+let viewerDragOffset = { x: 0, y: 0 };
+let currentViewerType = null;
+
+function openViewer(type) {
+    const popup = document.getElementById('viewer-popup');
+    const data = viewerData[type];
+    if (!data) return;
+
+    currentViewerType = type;
+    popup.classList.add('active');
+
+    // Set title
+    document.getElementById('viewer-title').textContent = data.title;
+
+    // Set description
+    document.getElementById('viewer-description').textContent = data.description || 'No description available.';
+
+    // Random position with 20% margin from edges
+    if (!viewerIsFullscreen) {
+        const marginX = window.innerWidth * 0.2;
+        const marginY = window.innerHeight * 0.2;
+        const availableWidth = window.innerWidth - (2 * marginX) - 600;
+        const availableHeight = window.innerHeight - (2 * marginY) - 500;
+
+        const randomX = marginX + (Math.random() * availableWidth);
+        const randomY = marginY + (Math.random() * availableHeight);
+
+        popup.style.left = randomX + 'px';
+        popup.style.top = randomY + 'px';
+        popup.style.width = '600px';
+        popup.style.height = '500px';
+    }
+
+    renderViewerContent(type);
+}
+
+function closeViewer() {
+    const popup = document.getElementById('viewer-popup');
+    const display = document.getElementById('viewer-display');
+
+    // Stop all media playback before closing
+    // 1. Stop videos
+    const videos = display.querySelectorAll('video');
+    videos.forEach(video => {
+        video.pause();
+        video.currentTime = 0;
+        video.src = '';
+    });
+
+    // 2. Clear iframes (stops YouTube and other embedded content)
+    const iframes = display.querySelectorAll('iframe');
+    iframes.forEach(iframe => {
+        iframe.src = 'about:blank';
+    });
+
+    // 3. Clear all content from display
+    display.innerHTML = '';
+
+    // Close popup
+    popup.classList.remove('active');
+    viewerIsFullscreen = false;
+    popup.classList.remove('fullscreen');
+    currentViewerType = null;
+
+    const fullscreenBtn = document.getElementById('viewer-fullscreen');
+    fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+}
+
+function toggleViewerFullscreen() {
+    const popup = document.getElementById('viewer-popup');
+    const fullscreenBtn = document.getElementById('viewer-fullscreen');
+
+    viewerIsFullscreen = !viewerIsFullscreen;
+
+    if (viewerIsFullscreen) {
+        popup.classList.add('fullscreen');
+        fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+    } else {
+        popup.classList.remove('fullscreen');
+        fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+    }
+}
+
+function openViewerInNewTab() {
+    if (!currentViewerType) return;
+
+    const data = viewerData[currentViewerType];
+    if (!data) return;
+
+    // Open the newTabUrl in a new browser tab
+    if (data.newTabUrl) {
+        window.open(data.newTabUrl, '_blank', 'noopener,noreferrer');
+    }
+}
+
+function renderViewerContent(type) {
+    const display = document.getElementById('viewer-display');
+    display.innerHTML = '';
+
+    const data = viewerData[type];
+    if (!data) return;
+
+    let contentHTML = '';
+
+    switch (data.type) {
+        case 'image':
+            contentHTML = `<img src="${data.url}" alt="Image">`;
+            break;
+
+        case 'video':
+            if (data.url.includes('youtube.com') || data.url.includes('youtu.be')) {
+                contentHTML = `<iframe src="${data.url}" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>`;
+            } else {
+                contentHTML = `<video controls autoplay playsinline><source src="${data.url}" type="video/mp4"></video>`;
+            }
+            break;
+
+        case 'web':
+            contentHTML = `<iframe src="${data.url}" sandbox="allow-scripts allow-same-origin allow-popups" referrerpolicy="no-referrer"></iframe>`;
+            break;
+
+        case 'html':
+            const blob = new Blob([data.content], { type: 'text/html' });
+            const blobURL = URL.createObjectURL(blob);
+            contentHTML = `<iframe src="${blobURL}"></iframe>`;
+            break;
+
+        default:
+            contentHTML = '<p style="color: rgba(255,255,255,0.5); font-family: monospace;">UNSUPPORTED FORMAT</p>';
+    }
+
+    display.innerHTML = contentHTML;
+}
+
+// Make viewer draggable
+function initViewerDrag() {
+    const popup = document.getElementById('viewer-popup');
+    const titlebar = document.getElementById('viewer-titlebar');
+
+    let isDragging = false;
+
+    titlebar.addEventListener('mousedown', (e) => {
+        if (viewerIsFullscreen) return;
+        isDragging = true;
+
+        const rect = popup.getBoundingClientRect();
+        viewerDragOffset.x = e.clientX - rect.left;
+        viewerDragOffset.y = e.clientY - rect.top;
+
+        titlebar.style.cursor = 'grabbing';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging || viewerIsFullscreen) return;
+
+        const x = e.clientX - viewerDragOffset.x;
+        const y = e.clientY - viewerDragOffset.y;
+
+        popup.style.left = x + 'px';
+        popup.style.top = y + 'px';
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+        titlebar.style.cursor = 'move';
+    });
+}
+
+// Viewer event listeners
+document.getElementById('viewer-close').addEventListener('click', closeViewer);
+document.getElementById('viewer-fullscreen').addEventListener('click', toggleViewerFullscreen);
+document.getElementById('viewer-newtab').addEventListener('click', openViewerInNewTab);
+
+// Initialize drag
+initViewerDrag();
     </script>
   </body>
 </html>
