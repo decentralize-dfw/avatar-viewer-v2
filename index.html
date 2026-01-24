@@ -543,16 +543,16 @@ body {
 
 .viewer-controls {
     display: flex;
-    gap: 8px;
+    gap: 6px;
 }
 
 .viewer-btn {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     border: 1px solid rgba(255, 255, 255, 0.5);
     background: rgba(0, 0, 0, 0.8);
     color: #fff;
-    font-size: 10px;
+    font-size: 9px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -565,36 +565,6 @@ body {
     border-color: #fff;
 }
 
-/* Viewer Tabs */
-.viewer-tabs {
-    display: flex;
-    background: rgba(0, 0, 0, 0.9);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.viewer-tab {
-    padding: 8px 16px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 9px;
-    color: rgba(255, 255, 255, 0.6);
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    cursor: pointer;
-    transition: 0.2s;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.viewer-tab:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-}
-
-.viewer-tab.active {
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
-    border-bottom: 2px solid #fff;
-}
-
 /* Viewer Content */
 .viewer-display {
     flex: 1;
@@ -603,6 +573,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 0;
 }
 
 .viewer-display iframe,
@@ -620,6 +591,23 @@ body {
 
 .viewer-display img {
     filter: grayscale(0.2) contrast(1.15);
+}
+
+/* Viewer Description */
+.viewer-description {
+    background: rgba(0, 0, 0, 0.95);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 12px 15px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.7);
+    max-height: 80px;
+    overflow: hidden;
+}
+
+.viewer-popup.fullscreen .viewer-description {
+    display: none;
 }
 
 /* GRID CONTAINER DÜZENLEMESİ: Bottom 0 yapıldı */
@@ -1249,8 +1237,11 @@ body {
     <!-- UNIVERSAL VIEWER POP-UP -->
     <div class="viewer-popup" id="viewer-popup">
         <div class="viewer-titlebar" id="viewer-titlebar">
-            <div class="viewer-title">UNIVERSAL VIEWER</div>
+            <div class="viewer-title" id="viewer-title">UNIVERSAL VIEWER</div>
             <div class="viewer-controls">
+                <div class="viewer-btn" id="viewer-newtab" title="Open in New Tab">
+                    <i class="fas fa-external-link-alt"></i>
+                </div>
                 <div class="viewer-btn" id="viewer-fullscreen" title="Fullscreen">
                     <i class="fas fa-expand"></i>
                 </div>
@@ -1259,15 +1250,11 @@ body {
                 </div>
             </div>
         </div>
-        <div class="viewer-tabs" id="viewer-tabs">
-            <div class="viewer-tab active" data-type="image">IMAGE</div>
-            <div class="viewer-tab" data-type="video-mp4">VIDEO</div>
-            <div class="viewer-tab" data-type="video-yt">YOUTUBE</div>
-            <div class="viewer-tab" data-type="web">WEB</div>
-            <div class="viewer-tab" data-type="html">HTML</div>
-        </div>
         <div class="viewer-display" id="viewer-display">
             <!-- Content will be loaded here -->
+        </div>
+        <div class="viewer-description" id="viewer-description">
+            Description will appear here
         </div>
     </div>
 
@@ -1865,39 +1852,68 @@ function navigateAvatar(direction) {
 const viewerData = {
     'image': {
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop'
+        title: 'IMAGE VIEWER',
+        url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop',
+        newTabUrl: 'https://unsplash.com/photos/abstract-art-1618005182384',
+        description: 'High-resolution abstract imagery. Experimental visual data stream from decentralized nodes. Color spectrum analysis in progress.'
     },
     'video-mp4': {
         type: 'video',
-        url: 'https://www.w3schools.com/html/mov_bbb.mp4'
+        title: 'VIDEO PLAYER',
+        url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+        newTabUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+        description: 'MP4 video playback module. Supports H.264 codec. Timeline manipulation enabled. Frame-by-frame analysis available.'
     },
     'video-yt': {
         type: 'video',
-        url: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+        title: 'YOUTUBE STREAM',
+        url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+        newTabUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        description: 'External video streaming interface. Embedded player with network latency compensation. Auto-quality adjustment protocol active.'
     },
     'web': {
         type: 'web',
-        url: 'https://en.wikipedia.org/wiki/Main_Page'
+        title: 'WEB BROWSER',
+        url: 'https://en.wikipedia.org/wiki/Main_Page',
+        newTabUrl: 'https://en.wikipedia.org/wiki/Main_Page',
+        description: 'Sandboxed web viewport. External content rendering engine. Cross-origin resource sharing policies enforced. Limited interaction mode.'
     },
     'html': {
         type: 'html',
-        content: '<div style="padding:40px; color: #00ff9d; font-family: monospace; background: #000;"><h1 style="font-size: 24px; margin-bottom: 20px;">C2W2 SYSTEM</h1><p style="line-height: 1.8;">This is rendered HTML content.</p><button style="padding:10px 20px; background:#fff; color:#000; border:none; cursor:pointer; margin-top: 20px;">EXECUTE</button></div>'
+        title: 'HTML RENDERER',
+        content: '<div style="padding:40px; color: #fff; font-family: monospace; background: #000;"><h1 style="font-size: 24px; margin-bottom: 20px; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px;">C2W2 SYSTEM</h1><p style="line-height: 1.8; margin-bottom: 15px;">This is rendered HTML content in an isolated environment.</p><p style="line-height: 1.8; color: rgba(255,255,255,0.7);">Custom markup injection supported. JavaScript execution permitted in sandbox context.</p><button style="padding:10px 20px; background:#fff; color:#000; border:2px solid #fff; cursor:pointer; margin-top: 20px; font-family: monospace; font-weight: bold;">EXECUTE COMMAND</button></div>',
+        newTabUrl: 'about:blank',
+        description: 'Raw HTML interpreter. Isolated execution environment. Custom CSS and JavaScript support. Real-time DOM manipulation enabled.'
     }
 };
 
 let viewerIsFullscreen = false;
 let viewerDragOffset = { x: 0, y: 0 };
+let currentViewerType = null;
 
 function openViewer(type) {
     const popup = document.getElementById('viewer-popup');
+    const data = viewerData[type];
+    if (!data) return;
+
+    currentViewerType = type;
     popup.classList.add('active');
 
-    // Random position (not fullscreen)
+    // Set title
+    document.getElementById('viewer-title').textContent = data.title;
+
+    // Set description
+    document.getElementById('viewer-description').textContent = data.description || 'No description available.';
+
+    // Random position with 20% margin from edges
     if (!viewerIsFullscreen) {
-        const maxX = window.innerWidth - 500;
-        const maxY = window.innerHeight - 400;
-        const randomX = Math.max(50, Math.random() * maxX);
-        const randomY = Math.max(50, Math.random() * maxY);
+        const marginX = window.innerWidth * 0.2;
+        const marginY = window.innerHeight * 0.2;
+        const availableWidth = window.innerWidth - (2 * marginX) - 600;
+        const availableHeight = window.innerHeight - (2 * marginY) - 500;
+
+        const randomX = marginX + (Math.random() * availableWidth);
+        const randomY = marginY + (Math.random() * availableHeight);
 
         popup.style.left = randomX + 'px';
         popup.style.top = randomY + 'px';
@@ -1905,7 +1921,7 @@ function openViewer(type) {
         popup.style.height = '500px';
     }
 
-    switchViewerTab(type);
+    renderViewerContent(type);
 }
 
 function closeViewer() {
@@ -1933,18 +1949,16 @@ function toggleViewerFullscreen() {
     }
 }
 
-function switchViewerTab(type) {
-    // Update active tab
-    const tabs = document.querySelectorAll('.viewer-tab');
-    tabs.forEach(tab => {
-        tab.classList.remove('active');
-        if (tab.getAttribute('data-type') === type) {
-            tab.classList.add('active');
-        }
-    });
+function openViewerInNewTab() {
+    if (!currentViewerType) return;
 
-    // Render content
-    renderViewerContent(type);
+    const data = viewerData[currentViewerType];
+    if (!data) return;
+
+    // Open the newTabUrl in a new browser tab
+    if (data.newTabUrl) {
+        window.open(data.newTabUrl, '_blank', 'noopener,noreferrer');
+    }
 }
 
 function renderViewerContent(type) {
@@ -2023,14 +2037,7 @@ function initViewerDrag() {
 // Viewer event listeners
 document.getElementById('viewer-close').addEventListener('click', closeViewer);
 document.getElementById('viewer-fullscreen').addEventListener('click', toggleViewerFullscreen);
-
-// Tab click handlers
-document.querySelectorAll('.viewer-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-        const type = tab.getAttribute('data-type');
-        switchViewerTab(type);
-    });
-});
+document.getElementById('viewer-newtab').addEventListener('click', openViewerInNewTab);
 
 // Initialize drag
 initViewerDrag();
