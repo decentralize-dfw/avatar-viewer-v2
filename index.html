@@ -1926,9 +1926,31 @@ function openViewer(type) {
 
 function closeViewer() {
     const popup = document.getElementById('viewer-popup');
+    const display = document.getElementById('viewer-display');
+
+    // Stop all media playback before closing
+    // 1. Stop videos
+    const videos = display.querySelectorAll('video');
+    videos.forEach(video => {
+        video.pause();
+        video.currentTime = 0;
+        video.src = '';
+    });
+
+    // 2. Clear iframes (stops YouTube and other embedded content)
+    const iframes = display.querySelectorAll('iframe');
+    iframes.forEach(iframe => {
+        iframe.src = 'about:blank';
+    });
+
+    // 3. Clear all content from display
+    display.innerHTML = '';
+
+    // Close popup
     popup.classList.remove('active');
     viewerIsFullscreen = false;
     popup.classList.remove('fullscreen');
+    currentViewerType = null;
 
     const fullscreenBtn = document.getElementById('viewer-fullscreen');
     fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
