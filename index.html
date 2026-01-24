@@ -350,6 +350,11 @@ body {
     gap: 20px;
 }
 
+/* Hide name section in right panel on desktop */
+.right-info-panel .avatar-name-section {
+    display: none;
+}
+
 .detail-text-box { padding: 0; background: transparent; }
 
 .detail-text-box h3 {
@@ -517,67 +522,26 @@ body {
     100% { opacity: 0.3; transform: translateY(0); }
 }
 
-/* Karıncalı Border Animasyonu */
-@keyframes marchingAnts {
-    0% { stroke-dashoffset: 0; }
-    100% { stroke-dashoffset: 20; }
-}
-
 /* ID CARD KÜNYE */
 .grid-item {
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-    border: none;
+    background: rgba(10, 10, 10, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     padding: 0;
     cursor: pointer;
     position: relative;
     display: flex;
     flex-direction: column;
     transition: all 0.3s ease;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
-    overflow: visible;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    overflow: hidden;
     opacity: 0.6; /* Default dark */
-}
-
-/* Karıncalı Border Efekti */
-.grid-item::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: repeating-linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.4) 0px,
-        rgba(255, 255, 255, 0.4) 6px,
-        transparent 6px,
-        transparent 12px
-    );
-    background-size: 20px 100%;
-    animation: marchingAnts 1s linear infinite;
-    pointer-events: none;
-    z-index: -1;
-    mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    padding: 2px;
 }
 
 .grid-item:hover {
     opacity: 1 !important; /* Parlat */
-    box-shadow: 0 0 40px rgba(255, 255, 255, 0.6);
-    transform: translateY(-8px) scale(1.02);
-}
-
-.grid-item:hover::before {
-    background: repeating-linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.8) 0px,
-        rgba(255, 255, 255, 0.8) 6px,
-        transparent 6px,
-        transparent 12px
-    );
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    transform: translateY(-4px);
 }
 
 /* C2W2 HEADER */
@@ -758,6 +722,164 @@ body {
     .avatar-grid { grid-template-columns: 1fr; }
     .avatar-grid-container { padding: 15px; }
 }
+
+/* MOBILE RESPONSIVE (768px ve altı) */
+@media (max-width: 768px) {
+    /* Hide collections filter */
+    .collections {
+        display: none !important;
+    }
+
+    /* Top bar simplified */
+    .top-section {
+        height: 40px;
+        padding: 0 10px;
+        justify-content: flex-start;
+        gap: 10px;
+    }
+
+    .title {
+        display: none;
+    }
+
+    .center-menu {
+        flex: 0;
+        justify-content: flex-start;
+    }
+
+    .grid-toggle-text-btn {
+        font-size: 9px;
+        padding: 4px 10px;
+        letter-spacing: 1px;
+    }
+
+    /* Main layout: Single column stack */
+    .main-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+        height: calc(100vh - 120px);
+        padding: 0;
+    }
+
+    /* GLB Viewer: Square on top */
+    .center-viewer-section {
+        order: 1;
+        aspect-ratio: 1/1;
+        width: 100%;
+        max-height: 50vh;
+    }
+
+    /* Video: Small overlay on GLB top-left */
+    .left-video-section {
+        order: 1;
+        position: absolute;
+        top: 45px;
+        left: 10px;
+        width: 100px;
+        height: auto;
+        z-index: 20;
+        background: rgba(0, 0, 0, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-right: none;
+    }
+
+    .video-wrapper {
+        width: 100%;
+        margin: 0;
+        aspect-ratio: 9/16;
+    }
+
+    .video-header {
+        display: none;
+    }
+
+    .left-info-content,
+    .tech-icons-section {
+        display: none;
+    }
+
+    /* Info Panel: Below GLB, scrollable */
+    .right-info-panel {
+        order: 2;
+        border-left: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 15px;
+        overflow-y: auto;
+        height: auto;
+        max-height: calc(50vh - 100px);
+    }
+
+    /* Make name sticky */
+    .right-info-panel .avatar-name-section {
+        position: sticky;
+        top: 0;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 5;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        display: block;
+    }
+
+    .right-info-panel .avatar-name-big {
+        font-size: 18px;
+    }
+
+    /* Hide desktop name section on mobile */
+    .left-video-section .avatar-name-section {
+        display: none !important;
+    }
+
+    /* Bottom carousel: smaller, fixed */
+    .bottom-section {
+        height: 60px;
+    }
+
+    .avatar-item {
+        width: 40px;
+        height: 40px;
+    }
+
+    .avatar-item.active {
+        transform: scale(1.2);
+    }
+
+    .carousel-nav {
+        width: 30px;
+        font-size: 14px;
+    }
+
+    /* Grid mode: 2x2 grid, image only */
+    .avatar-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px;
+    }
+
+    .avatar-grid-container {
+        padding: 10px;
+        top: 40px;
+    }
+
+    /* Simplified grid item: image only */
+    .grid-item {
+        aspect-ratio: 1/1;
+        padding: 0;
+        background: #000;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .grid-item-agent,
+    .grid-item-content {
+        display: none;
+    }
+
+    /* Mobile grid images */
+    .grid-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -848,6 +970,9 @@ body {
         </div>
 
         <div class="right-info-panel">
+          <div class="avatar-name-section">
+            <div class="avatar-name-big" id="avatar-name-big-right">NEUE DOJO<br>CURATOR</div>
+          </div>
           <div class="detail-text-box" id="detail-text-box"></div>
         </div>
       </div>
@@ -1075,15 +1200,20 @@ function onWindowResize() {
     camera.updateProjectionMatrix();
 
     renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-    
+
     pixelRenderer.setSize(
-        canvasContainer.clientWidth * CONFIG.viewer.pixelFactor, 
-        canvasContainer.clientHeight * CONFIG.viewer.pixelFactor, 
+        canvasContainer.clientWidth * CONFIG.viewer.pixelFactor,
+        canvasContainer.clientHeight * CONFIG.viewer.pixelFactor,
         false
     );
-    
+
     // Carousel'ı ekran boyutuna göre güncelle
     renderCircularCarousel();
+
+    // Grid'i yeniden render et (mobile/desktop geçişlerinde)
+    if (isGridView) {
+        populateAvatarGrid();
+    }
 }
 
 function populateCollectionButtons() {
@@ -1172,6 +1302,8 @@ function populateAvatarGrid() {
     grid.innerHTML = '';
     const filteredAvatars = activeCollection === 'ALL' ? avatarData : avatarData.filter(a => a.collection === activeCollection);
 
+    const isMobile = window.innerWidth <= 768;
+
     filteredAvatars.forEach((avatar) => {
         const item = document.createElement('div');
         item.className = 'grid-item';
@@ -1180,35 +1312,54 @@ function populateAvatarGrid() {
             loadAvatar(avatar);
         };
 
-        // Brief description
-        const briefDesc = avatarBriefInfo[avatar.name] || "No description available.";
+        if (isMobile) {
+            // Mobile: image only
+            const img = document.createElement('img');
+            img.src = avatar.thumbnailUrl;
+            img.alt = avatar.name;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.filter = 'brightness(0.5) contrast(0.4) saturate(0)';
+            img.style.transition = '0.3s';
 
-        // Tags
-        const tags = [
-            `FIT #${avatar.fitNo}`,
-            avatar.collection.toUpperCase(),
-            `PART ${avatar.id <= 7 ? '1' : avatar.id <= 17 ? '2' : '3'}`
-        ];
+            item.appendChild(img);
 
-        item.innerHTML = `
-            <div class="grid-item-agent">
-                <div class="grid-item-agent-label">AGENT</div>
-                <div class="grid-item-name">${avatar.name.toUpperCase()}</div>
-            </div>
+            item.onmouseenter = () => {
+                img.style.filter = 'brightness(1.1) contrast(1.2) saturate(0.9)';
+            };
+            item.onmouseleave = () => {
+                img.style.filter = 'brightness(0.5) contrast(0.4) saturate(0)';
+            };
+        } else {
+            // Desktop: full card
+            const briefDesc = avatarBriefInfo[avatar.name] || "No description available.";
+            const tags = [
+                `FIT #${avatar.fitNo}`,
+                avatar.collection.toUpperCase(),
+                `PART ${avatar.id <= 7 ? '1' : avatar.id <= 17 ? '2' : '3'}`
+            ];
 
-            <div class="grid-item-content">
-                <div class="grid-item-thumbnail-wrapper">
-                    <img src="${avatar.thumbnailUrl}" alt="${avatar.name}">
+            item.innerHTML = `
+                <div class="grid-item-agent">
+                    <div class="grid-item-agent-label">AGENT</div>
+                    <div class="grid-item-name">${avatar.name.toUpperCase()}</div>
                 </div>
 
-                <div class="grid-item-info">
-                    <div class="grid-item-tags">
-                        ${tags.map(tag => `<div class="grid-item-tag">${tag}</div>`).join('')}
+                <div class="grid-item-content">
+                    <div class="grid-item-thumbnail-wrapper">
+                        <img src="${avatar.thumbnailUrl}" alt="${avatar.name}">
                     </div>
-                    <div class="grid-item-description">${briefDesc}</div>
+
+                    <div class="grid-item-info">
+                        <div class="grid-item-tags">
+                            ${tags.map(tag => `<div class="grid-item-tag">${tag}</div>`).join('')}
+                        </div>
+                        <div class="grid-item-description">${briefDesc}</div>
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
+        }
 
         grid.appendChild(item);
     });
@@ -1254,7 +1405,14 @@ function loadAvatar(avatar) {
 }
 
 function updateRightPanel(avatar) {
+    // Update left panel name
     document.getElementById('avatar-name-big').innerHTML = avatar.name.toUpperCase().replace(' ', '<br>');
+
+    // Update right panel name (for mobile)
+    const rightNameEl = document.getElementById('avatar-name-big-right');
+    if (rightNameEl) {
+        rightNameEl.innerHTML = avatar.name.toUpperCase().replace(' ', '<br>');
+    }
 
     const tagsContainer = document.getElementById('avatar-tags');
     tagsContainer.innerHTML = `
@@ -1266,7 +1424,7 @@ function updateRightPanel(avatar) {
     document.getElementById('brief-info').textContent = avatarBriefInfo[avatar.name] || "No description available.";
 
     const detailInfo = avatarDetailedInfo[avatar.name] || avatarDetailedInfo[Object.keys(avatarDetailedInfo).find(key => key.includes(avatar.name) || avatar.name.includes(key))];
-    
+
     const detailBox = document.getElementById('detail-text-box');
     if (detailInfo) {
         detailBox.innerHTML = `
