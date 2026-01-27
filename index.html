@@ -40,30 +40,24 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* SCROLLBAR - Nearly invisible */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--grey-300); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--grey-400); }
 
 /* ═══════════════════════════════════════
-   MAIN LAYOUT - Full viewport canvas
+   MAIN LAYOUT
 ═══════════════════════════════════════ */
 .app {
     height: 100vh;
-    display: grid;
-    grid-template-rows: 1fr;
-    grid-template-columns: 1fr;
     position: relative;
 }
 
 /* ═══════════════════════════════════════
-   VIEWER - Full screen 3D canvas
+   VIEWER - Full screen 3D
 ═══════════════════════════════════════ */
 .viewer {
-    position: relative;
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    inset: 0;
     background: var(--grey-100);
 }
 
@@ -101,88 +95,61 @@ body {
     z-index: 50;
 }
 
-.loader-inner {
-    text-align: center;
-}
+.loader-inner { text-align: center; }
 
 .loader-text {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 400;
-    letter-spacing: 4px;
-    color: var(--grey-500);
+    letter-spacing: 3px;
+    color: var(--grey-400);
     text-transform: uppercase;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .loader-bar {
-    width: 80px;
+    width: 60px;
     height: 1px;
     background: var(--grey-300);
     margin: 0 auto;
-    overflow: hidden;
 }
 
 .loader-progress {
     height: 100%;
-    background: var(--grey-900);
+    background: var(--grey-600);
     width: 0%;
-    transition: width 0.1s linear;
+    transition: width 0.1s;
 }
 
 /* ═══════════════════════════════════════
-   TOP BAR - Floating minimal
+   TOP BAR
 ═══════════════════════════════════════ */
 .top-bar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    height: 72px;
+    height: 64px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 48px;
+    padding: 0 40px;
     z-index: 100;
     pointer-events: none;
 }
 
-.top-bar > * {
-    pointer-events: auto;
-}
+.top-bar > * { pointer-events: auto; }
 
 .logo {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
-    letter-spacing: 3px;
-    color: var(--grey-800);
+    letter-spacing: 2px;
+    color: var(--grey-700);
 }
 
 .nav-toggle {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 400;
-    letter-spacing: 2px;
-    color: var(--grey-600);
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 12px 0;
-    transition: color 0.3s;
-    text-transform: uppercase;
-}
-
-.nav-toggle:hover {
-    color: var(--grey-900);
-}
-
-.collections-nav {
-    display: flex;
-    gap: 24px;
-}
-
-.collection-btn {
-    font-size: 11px;
-    font-weight: 400;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     color: var(--grey-500);
     background: none;
     border: none;
@@ -190,153 +157,53 @@ body {
     padding: 8px 0;
     transition: color 0.3s;
     text-transform: uppercase;
-    position: relative;
 }
 
-.collection-btn::after {
-    content: '';
-    position: absolute;
-    bottom: 4px;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background: var(--grey-900);
-    transition: width 0.3s;
-}
+.nav-toggle:hover { color: var(--grey-800); }
 
-.collection-btn:hover { color: var(--grey-800); }
-.collection-btn.active { color: var(--grey-900); }
-.collection-btn.active::after { width: 100%; }
-
-/* ═══════════════════════════════════════
-   LEFT INFO PANEL - Floating overlay
-═══════════════════════════════════════ */
-.info-panel {
-    position: fixed;
-    left: 48px;
-    bottom: 120px;
-    width: 320px;
-    z-index: 90;
-    pointer-events: none;
-}
-
-.info-panel > * {
-    pointer-events: auto;
-}
-
-.avatar-title {
-    font-size: 48px;
-    font-weight: 200;
-    letter-spacing: -2px;
-    line-height: 1;
-    color: var(--grey-900);
-    margin-bottom: 24px;
-}
-
-.avatar-meta {
+.collections-nav {
     display: flex;
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: 20px;
 }
 
-.meta-tag {
+.collection-btn {
     font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 1.5px;
-    color: var(--grey-500);
-    text-transform: uppercase;
-}
-
-.avatar-desc {
-    font-size: 13px;
-    font-weight: 300;
-    line-height: 1.8;
-    color: var(--grey-600);
-    max-width: 280px;
-}
-
-/* ═══════════════════════════════════════
-   RIGHT DETAIL PANEL - Slide out
-═══════════════════════════════════════ */
-.detail-panel {
-    position: fixed;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 380px;
-    background: var(--white);
-    border-left: 1px solid var(--grey-200);
-    padding: 100px 40px 40px;
-    overflow-y: auto;
-    z-index: 80;
-    transform: translateX(100%);
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.detail-panel.open {
-    transform: translateX(0);
-}
-
-.detail-toggle {
-    position: fixed;
-    right: 48px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 85;
-    color: var(--grey-500);
-    transition: color 0.3s;
-}
-
-.detail-toggle:hover {
-    color: var(--grey-900);
-}
-
-.detail-toggle i {
-    font-size: 16px;
-}
-
-.detail-section {
-    margin-bottom: 40px;
-}
-
-.detail-label {
-    font-size: 9px;
-    font-weight: 500;
-    letter-spacing: 2px;
+    font-weight: 400;
+    letter-spacing: 1px;
     color: var(--grey-400);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 0;
+    transition: color 0.3s;
     text-transform: uppercase;
-    margin-bottom: 12px;
 }
 
-.detail-content {
-    font-size: 13px;
-    font-weight: 300;
-    line-height: 1.9;
-    color: var(--grey-700);
-}
+.collection-btn:hover { color: var(--grey-600); }
+.collection-btn.active { color: var(--grey-800); }
 
 /* ═══════════════════════════════════════
-   VIDEO PREVIEW - Minimal corner
+   LEFT PANEL - Video on top, info below
 ═══════════════════════════════════════ */
-.video-preview {
+.left-panel {
     position: fixed;
-    right: 48px;
-    bottom: 120px;
-    width: 120px;
+    left: 40px;
+    bottom: 100px;
+    width: 140px;
     z-index: 90;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
+/* Video */
 .video-wrap {
     position: relative;
     aspect-ratio: 9/16;
     background: var(--grey-200);
     overflow: hidden;
+    border-radius: 4px;
+    border: 1px solid var(--grey-300);
 }
 
 #main-video {
@@ -357,37 +224,128 @@ body {
     image-rendering: pixelated;
 }
 
-.video-label {
-    margin-top: 8px;
+/* Info below video */
+.info-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.avatar-title {
+    font-size: 18px;
+    font-weight: 300;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    color: var(--grey-800);
+}
+
+.avatar-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.meta-tag {
     font-size: 9px;
-    font-weight: 400;
-    letter-spacing: 2px;
+    font-weight: 500;
+    letter-spacing: 1px;
     color: var(--grey-400);
     text-transform: uppercase;
-    text-align: center;
+}
+
+.avatar-desc {
+    font-size: 11px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--grey-500);
 }
 
 /* ═══════════════════════════════════════
-   BOTTOM NAV - Minimal carousel
+   RIGHT - Detail toggle
+═══════════════════════════════════════ */
+.detail-toggle {
+    position: fixed;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 90;
+    color: var(--grey-400);
+    border: 1px solid var(--grey-300);
+    border-radius: 4px;
+    background: var(--white);
+    transition: all 0.3s;
+}
+
+.detail-toggle:hover {
+    color: var(--grey-700);
+    border-color: var(--grey-400);
+}
+
+.detail-toggle i { font-size: 12px; }
+
+/* Detail Panel */
+.detail-panel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 340px;
+    background: var(--white);
+    border-left: 1px solid var(--grey-200);
+    padding: 80px 32px 32px;
+    overflow-y: auto;
+    z-index: 80;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.detail-panel.open { transform: translateX(0); }
+
+.detail-section { margin-bottom: 32px; }
+
+.detail-label {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    color: var(--grey-400);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.detail-content {
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--grey-600);
+}
+
+/* ═══════════════════════════════════════
+   BOTTOM NAV
 ═══════════════════════════════════════ */
 .bottom-nav {
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
-    height: 80px;
+    height: 72px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     z-index: 100;
-    background: linear-gradient(to top, var(--grey-100) 50%, transparent);
-    padding-bottom: 24px;
+    background: linear-gradient(to top, var(--grey-100) 60%, transparent);
+    padding-bottom: 20px;
 }
 
 .nav-arrow {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -396,82 +354,79 @@ body {
     transition: color 0.3s;
 }
 
-.nav-arrow:hover {
-    color: var(--grey-900);
-}
+.nav-arrow:hover { color: var(--grey-800); }
 
 .nav-dots {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 0 16px;
+    gap: 5px;
+    padding: 0 12px;
 }
 
 .nav-dot {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
     background: var(--grey-300);
     cursor: pointer;
     transition: all 0.3s;
 }
 
-.nav-dot:hover {
-    background: var(--grey-500);
-    transform: scale(1.2);
-}
+.nav-dot:hover { background: var(--grey-500); }
 
 .nav-dot.active {
-    background: var(--grey-900);
-    width: 24px;
+    background: var(--grey-700);
+    width: 20px;
     border-radius: 3px;
 }
 
 .nav-counter {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 400;
     letter-spacing: 1px;
-    color: var(--grey-500);
-    margin-left: 16px;
+    color: var(--grey-400);
+    margin-left: 12px;
 }
 
 /* ═══════════════════════════════════════
-   GRID VIEW - Gallery mode
+   GRID VIEW - Clean gallery
 ═══════════════════════════════════════ */
 .grid-view {
     position: fixed;
     inset: 0;
-    background: var(--grey-50);
+    background: var(--white);
     z-index: 200;
     display: none;
     overflow-y: auto;
-    padding: 100px 48px 48px;
 }
 
-.grid-view.open {
-    display: block;
-}
+.grid-view.open { display: block; }
 
 .grid-header {
+    position: sticky;
+    top: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 48px;
+    padding: 24px 40px;
+    background: var(--white);
+    border-bottom: 1px solid var(--grey-200);
+    z-index: 10;
 }
 
 .grid-title {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 500;
-    letter-spacing: 3px;
-    color: var(--grey-600);
+    letter-spacing: 2px;
+    color: var(--grey-500);
     text-transform: uppercase;
 }
 
 .grid-close {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 400;
-    letter-spacing: 2px;
-    color: var(--grey-500);
+    letter-spacing: 1px;
+    color: var(--grey-400);
     background: none;
     border: none;
     cursor: pointer;
@@ -479,20 +434,20 @@ body {
     transition: color 0.3s;
 }
 
-.grid-close:hover {
-    color: var(--grey-900);
-}
+.grid-close:hover { color: var(--grey-700); }
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: var(--grey-200);
+    padding: 1px;
 }
 
 .grid-item {
     position: relative;
     aspect-ratio: 3/4;
-    background: var(--grey-200);
+    background: var(--grey-100);
     overflow: hidden;
     cursor: pointer;
 }
@@ -501,13 +456,13 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: grayscale(0.6);
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    filter: grayscale(0.4);
+    transition: all 0.4s;
 }
 
 .grid-item:hover img {
     filter: grayscale(0);
-    transform: scale(1.05);
+    transform: scale(1.03);
 }
 
 .grid-item-info {
@@ -515,36 +470,30 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 24px;
-    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    padding: 16px;
+    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
     opacity: 0;
-    transform: translateY(8px);
-    transition: all 0.4s;
+    transition: opacity 0.3s;
 }
 
-.grid-item:hover .grid-item-info {
-    opacity: 1;
-    transform: translateY(0);
-}
+.grid-item:hover .grid-item-info { opacity: 1; }
 
 .grid-item-name {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 400;
     color: var(--white);
-    letter-spacing: 0.5px;
 }
 
 .grid-item-meta {
-    font-size: 10px;
-    font-weight: 400;
-    color: rgba(255,255,255,0.6);
-    letter-spacing: 1px;
-    margin-top: 4px;
+    font-size: 9px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.5px;
+    margin-top: 2px;
     text-transform: uppercase;
 }
 
 /* ═══════════════════════════════════════
-   VIEWER POPUP - Clean modal
+   MODAL
 ═══════════════════════════════════════ */
 .modal {
     position: fixed;
@@ -556,16 +505,16 @@ body {
     justify-content: center;
 }
 
-.modal.open {
-    display: flex;
-}
+.modal.open { display: flex; }
 
 .modal-content {
-    width: 90%;
-    max-width: 900px;
-    height: 80%;
+    width: 85%;
+    max-width: 800px;
+    height: 75%;
     background: var(--white);
     position: relative;
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 .modal-header {
@@ -573,47 +522,47 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 48px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
+    padding: 0 16px;
     border-bottom: 1px solid var(--grey-200);
+    background: var(--white);
 }
 
 .modal-title {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 400;
     letter-spacing: 1px;
-    color: var(--grey-600);
+    color: var(--grey-500);
 }
 
-.modal-controls {
-    display: flex;
-    gap: 12px;
-}
+.modal-controls { display: flex; gap: 8px; }
 
 .modal-btn {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: none;
     border: 1px solid var(--grey-200);
+    border-radius: 3px;
     cursor: pointer;
-    color: var(--grey-500);
+    color: var(--grey-400);
     transition: all 0.2s;
+    font-size: 10px;
 }
 
 .modal-btn:hover {
     border-color: var(--grey-400);
-    color: var(--grey-800);
+    color: var(--grey-700);
 }
 
 .modal-body {
     position: absolute;
-    top: 48px;
+    top: 44px;
     left: 0;
     right: 0;
     bottom: 0;
@@ -632,133 +581,198 @@ body {
 }
 
 /* ═══════════════════════════════════════
-   TOOLS - Minimal icons
+   TOOLS
 ═══════════════════════════════════════ */
 .tools {
     position: fixed;
-    left: 48px;
-    top: 50%;
-    transform: translateY(-50%);
+    right: 40px;
+    bottom: 100px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 8px;
     z-index: 90;
 }
 
 .tool-btn {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: var(--white);
-    border: 1px solid var(--grey-200);
+    border: 1px solid var(--grey-300);
+    border-radius: 4px;
     cursor: pointer;
-    color: var(--grey-500);
+    color: var(--grey-400);
     transition: all 0.3s;
+    font-size: 11px;
 }
 
 .tool-btn:hover {
     border-color: var(--grey-400);
-    color: var(--grey-800);
+    color: var(--grey-700);
 }
 
-.tool-btn i {
+/* ═══════════════════════════════════════
+   MOBILE INFO MODAL
+═══════════════════════════════════════ */
+.mobile-info-modal {
+    position: fixed;
+    inset: 5%;
+    background: var(--white);
+    z-index: 300;
+    display: none;
+    flex-direction: column;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.mobile-info-modal.open { display: flex; }
+
+.mobile-info-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 290;
+    display: none;
+}
+
+.mobile-info-backdrop.open { display: block; }
+
+.mobile-info-header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px;
+    border-bottom: 1px solid var(--grey-200);
+}
+
+.mobile-info-close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid var(--grey-300);
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--grey-500);
     font-size: 12px;
+}
+
+.mobile-info-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+}
+
+.mobile-info-title {
+    font-size: 24px;
+    font-weight: 300;
+    color: var(--grey-800);
+    margin-bottom: 16px;
+}
+
+.mobile-info-meta {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.mobile-info-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: var(--grey-400);
+    text-transform: uppercase;
+}
+
+.mobile-info-desc {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--grey-600);
+    margin-bottom: 32px;
+}
+
+.mobile-info-section { margin-bottom: 24px; }
+
+.mobile-info-label {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    color: var(--grey-400);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.mobile-info-text {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--grey-600);
+}
+
+/* Mobile Info Button */
+.mobile-info-btn {
+    display: none;
+    position: fixed;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    background: var(--white);
+    border: 1px solid var(--grey-300);
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--grey-500);
+    z-index: 95;
+    font-size: 14px;
 }
 
 /* ═══════════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════════ */
 @media (max-width: 1200px) {
-    .grid-container {
-        grid-template-columns: repeat(3, 1fr);
-    }
+    .grid-container { grid-template-columns: repeat(4, 1fr); }
 }
 
 @media (max-width: 900px) {
-    .grid-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .info-panel {
-        left: 24px;
-        width: 280px;
-    }
-
-    .avatar-title {
-        font-size: 36px;
-    }
+    .grid-container { grid-template-columns: repeat(3, 1fr); }
+    .left-panel { width: 120px; left: 32px; }
+    .avatar-title { font-size: 16px; }
 }
 
 @media (max-width: 768px) {
     .top-bar {
-        padding: 0 24px;
-        height: 56px;
+        padding: 0 20px;
+        height: 52px;
     }
 
-    .collections-nav {
-        display: none;
-    }
+    .collections-nav { display: none; }
+    .left-panel { display: none; }
+    .detail-toggle { display: none; }
+    .tools { display: none; }
 
-    .info-panel {
-        left: 24px;
-        right: 24px;
-        bottom: 100px;
-        width: auto;
-    }
+    /* Show mobile info button */
+    .mobile-info-btn { display: flex; }
 
-    .avatar-title {
-        font-size: 28px;
-        margin-bottom: 16px;
-    }
+    .grid-container { grid-template-columns: repeat(2, 1fr); }
 
-    .avatar-desc {
-        display: none;
-    }
-
-    .video-preview {
-        display: none;
-    }
-
-    .detail-toggle {
-        display: none;
-    }
-
-    .tools {
-        display: none;
-    }
-
-    .grid-container {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1px;
-    }
-
-    .grid-view {
-        padding: 72px 0 0;
-    }
-
-    .grid-header {
-        padding: 0 24px;
-        margin-bottom: 24px;
-    }
-
-    .grid-item-info {
-        padding: 16px;
-    }
-
-    .grid-item-name {
-        font-size: 12px;
-    }
+    .grid-view { padding: 0; }
+    .grid-header { padding: 16px 20px; }
 
     .bottom-nav {
-        height: 64px;
+        height: 60px;
         padding-bottom: 16px;
     }
 
-    .nav-counter {
-        display: none;
-    }
+    .nav-counter { display: none; }
 }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -771,13 +785,12 @@ body {
 <body>
 
 <div class="app">
-    <!-- Main 3D Viewer -->
+    <!-- 3D Viewer -->
     <div class="viewer">
         <div class="viewer-canvas-wrap">
             <canvas id="viewer-canvas"></canvas>
             <canvas id="pixel-canvas"></canvas>
         </div>
-
         <div class="loader" id="loader">
             <div class="loader-inner">
                 <div class="loader-text">Loading</div>
@@ -795,11 +808,17 @@ body {
         <nav class="collections-nav" id="collections-nav"></nav>
     </header>
 
-    <!-- Left Info Panel -->
-    <aside class="info-panel">
-        <h1 class="avatar-title" id="avatar-title">Loading</h1>
-        <div class="avatar-meta" id="avatar-meta"></div>
-        <p class="avatar-desc" id="avatar-desc"></p>
+    <!-- Left Panel: Video + Info -->
+    <aside class="left-panel">
+        <div class="video-wrap">
+            <video id="main-video" loop muted autoplay playsinline></video>
+            <canvas id="video-pixel-fx"></canvas>
+        </div>
+        <div class="info-content">
+            <h1 class="avatar-title" id="avatar-title">Loading</h1>
+            <div class="avatar-meta" id="avatar-meta"></div>
+            <p class="avatar-desc" id="avatar-desc"></p>
+        </div>
     </aside>
 
     <!-- Tools -->
@@ -807,15 +826,6 @@ body {
         <button class="tool-btn" onclick="openModal('image')"><i class="fas fa-image"></i></button>
         <button class="tool-btn" onclick="openModal('video-mp4')"><i class="fas fa-play"></i></button>
         <button class="tool-btn" onclick="openModal('web')"><i class="fas fa-globe"></i></button>
-    </div>
-
-    <!-- Video Preview -->
-    <div class="video-preview">
-        <div class="video-wrap">
-            <video id="main-video" loop muted autoplay playsinline></video>
-            <canvas id="video-pixel-fx"></canvas>
-        </div>
-        <div class="video-label">Preview</div>
     </div>
 
     <!-- Detail Toggle -->
@@ -828,7 +838,12 @@ body {
         <div id="detail-content"></div>
     </aside>
 
-    <!-- Bottom Navigation -->
+    <!-- Mobile Info Button -->
+    <button class="mobile-info-btn" id="mobile-info-btn">
+        <i class="fas fa-info"></i>
+    </button>
+
+    <!-- Bottom Nav -->
     <nav class="bottom-nav">
         <div class="nav-arrow" id="nav-prev"><i class="fas fa-chevron-left"></i></div>
         <div class="nav-dots" id="nav-dots"></div>
@@ -840,10 +855,19 @@ body {
 <!-- Grid View -->
 <div class="grid-view" id="grid-view">
     <div class="grid-header">
-        <span class="grid-title">All Agents</span>
+        <span class="grid-title">Index</span>
         <button class="grid-close" id="grid-close">Close</button>
     </div>
     <div class="grid-container" id="grid-container"></div>
+</div>
+
+<!-- Mobile Info Modal -->
+<div class="mobile-info-backdrop" id="mobile-info-backdrop"></div>
+<div class="mobile-info-modal" id="mobile-info-modal">
+    <div class="mobile-info-header">
+        <button class="mobile-info-close" id="mobile-info-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="mobile-info-body" id="mobile-info-body"></div>
 </div>
 
 <!-- Modal -->
@@ -921,13 +945,11 @@ function initScene() {
     controls.autoRotateSpeed = 0.5;
     controls.target.set(CONFIG.target.x, CONFIG.target.y, CONFIG.target.z);
 
-    // Lighting
     scene.add(new THREE.AmbientLight(0xffffff, 0.6));
     const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
     dirLight.position.set(5, 10, 7.5);
     scene.add(dirLight);
 
-    // HDRI
     new THREE.RGBELoader().load(
         'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/equirectangular/venice_sunset_1k.hdr',
         (texture) => {
@@ -998,7 +1020,7 @@ function loadModel(url) {
 }
 
 // ═══════════════════════════════════════
-// VIDEO PIXEL FX
+// VIDEO PIXEL
 // ═══════════════════════════════════════
 let videoCanvas, videoCtx, videoEl;
 
@@ -1067,24 +1089,21 @@ async function loadExternalAvatarData() {
 }
 
 // ═══════════════════════════════════════
-// UI UPDATES
+// UI
 // ═══════════════════════════════════════
 function loadAvatar(avatar) {
     if (isModelLoading || !avatar) return;
     isModelLoading = true;
     activeAvatar = avatar;
 
-    // Title
     document.getElementById('avatar-title').textContent = avatar.name;
 
-    // Meta
     const meta = document.getElementById('avatar-meta');
     meta.innerHTML = `
         <span class="meta-tag">Fit ${avatar.fitNo}</span>
         <span class="meta-tag">${avatar.collection}</span>
     `;
 
-    // Description
     document.getElementById('avatar-desc').textContent = avatarBriefInfo[avatar.name] || '';
 
     // Detail panel
@@ -1108,7 +1127,7 @@ function loadAvatar(avatar) {
     } else {
         detailEl.innerHTML = `
             <div class="detail-section">
-                <div class="detail-label">Information</div>
+                <div class="detail-label">Info</div>
                 <div class="detail-content">
                     Part ${avatar.runwayPart}<br>
                     Fit #${avatar.fitNo}<br>
@@ -1124,10 +1143,7 @@ function loadAvatar(avatar) {
     video.load();
     video.play().catch(() => {});
 
-    // Model
     loadModel(avatar.modelUrl);
-
-    // Nav
     updateNav();
 }
 
@@ -1136,11 +1152,9 @@ function updateNav() {
     const idx = filtered.indexOf(activeAvatar);
     const total = filtered.length;
 
-    // Counter
     document.getElementById('nav-counter').textContent =
         String(idx + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
 
-    // Dots
     const dots = document.getElementById('nav-dots');
     dots.innerHTML = '';
 
@@ -1206,7 +1220,7 @@ function setCollection(c) {
 }
 
 // ═══════════════════════════════════════
-// GRID VIEW
+// GRID
 // ═══════════════════════════════════════
 function buildGrid() {
     const container = document.getElementById('grid-container');
@@ -1235,24 +1249,58 @@ function toggleGrid(open) {
 }
 
 // ═══════════════════════════════════════
+// MOBILE INFO MODAL
+// ═══════════════════════════════════════
+function openMobileInfo() {
+    if (!activeAvatar) return;
+
+    const body = document.getElementById('mobile-info-body');
+    const detail = avatarDetailedInfo[activeAvatar.name];
+    const brief = avatarBriefInfo[activeAvatar.name] || '';
+
+    let html = `
+        <div class="mobile-info-title">${activeAvatar.name}</div>
+        <div class="mobile-info-meta">
+            <span class="mobile-info-tag">Fit ${activeAvatar.fitNo}</span>
+            <span class="mobile-info-tag">${activeAvatar.collection}</span>
+        </div>
+        <div class="mobile-info-desc">${brief}</div>
+    `;
+
+    if (detail) {
+        html += `
+            <div class="mobile-info-section">
+                <div class="mobile-info-label">Visual</div>
+                <div class="mobile-info-text">${detail.visual}</div>
+            </div>
+            <div class="mobile-info-section">
+                <div class="mobile-info-label">Sound</div>
+                <div class="mobile-info-text">${detail.sound}</div>
+            </div>
+            <div class="mobile-info-section">
+                <div class="mobile-info-label">Concept</div>
+                <div class="mobile-info-text">${detail.concept}</div>
+            </div>
+        `;
+    }
+
+    body.innerHTML = html;
+    document.getElementById('mobile-info-backdrop').classList.add('open');
+    document.getElementById('mobile-info-modal').classList.add('open');
+}
+
+function closeMobileInfo() {
+    document.getElementById('mobile-info-backdrop').classList.remove('open');
+    document.getElementById('mobile-info-modal').classList.remove('open');
+}
+
+// ═══════════════════════════════════════
 // MODAL
 // ═══════════════════════════════════════
 const modalData = {
-    'image': {
-        title: 'Image',
-        url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1000',
-        type: 'image'
-    },
-    'video-mp4': {
-        title: 'Video',
-        url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-        type: 'video'
-    },
-    'web': {
-        title: 'Web',
-        url: 'https://en.wikipedia.org/wiki/Main_Page',
-        type: 'iframe'
-    }
+    'image': { title: 'Image', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1000', type: 'image' },
+    'video-mp4': { title: 'Video', url: 'https://www.w3schools.com/html/mov_bbb.mp4', type: 'video' },
+    'web': { title: 'Web', url: 'https://en.wikipedia.org/wiki/Main_Page', type: 'iframe' }
 };
 
 let currentModal = null;
@@ -1314,18 +1362,23 @@ async function init() {
         document.getElementById('detail-panel').classList.toggle('open');
     };
 
+    // Mobile info
+    document.getElementById('mobile-info-btn').onclick = openMobileInfo;
+    document.getElementById('mobile-info-close').onclick = closeMobileInfo;
+    document.getElementById('mobile-info-backdrop').onclick = closeMobileInfo;
+
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft') navigate(-1);
         if (e.key === 'ArrowRight') navigate(1);
         if (e.key === 'Escape') {
             closeModal();
             toggleGrid(false);
+            closeMobileInfo();
             document.getElementById('detail-panel').classList.remove('open');
         }
     });
 }
 
-// Meshopt
 if (typeof MeshoptDecoder !== 'undefined') {
     THREE.GLTFLoader.prototype.setMeshoptDecoder = function(d) {
         this.meshoptDecoder = d;
