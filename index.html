@@ -1024,24 +1024,46 @@ function updateVideoPixel() {
 // ═══════════════════════════════════════
 // DATA LOADING
 // ═══════════════════════════════════════
-async function loadData() {
-    const [brief, detail, avatars] = await Promise.all([
-        fetch('https://raw.githubusercontent.com/decentralize-dfw/avatar-viewer-v2/refs/heads/main/avatarBriefInfo.txt').then(r => r.text()).catch(() => '{}'),
-        fetch('https://raw.githubusercontent.com/decentralize-dfw/avatar-viewer-v2/refs/heads/main/avatarDetailedInfo.txt').then(r => r.text()).catch(() => '{}'),
-        fetch('https://raw.githubusercontent.com/decentralize-dfw/avatar-viewer-v2/refs/heads/main/avatarfiles.txt').then(r => r.text()).catch(() => '[]')
-    ]);
-
+async function loadExternalBriefInfo() {
     try {
-        avatarBriefInfo = new Function('return ' + brief.replace(/const\s+\w+\s*=\s*/, '').replace(/;$/, ''))();
-    } catch(e) {}
+        const response = await fetch('https://raw.githubusercontent.com/decentralize-dfw/avatar-viewer-v2/refs/heads/main/avatarBriefInfo.txt');
+        if (!response.ok) throw new Error("Network response was not ok");
+        const text = await response.text();
+        const cleanText = text.replace(/const\s+avatarBriefInfo\s*=\s*/, '').trim().replace(/;$/, '');
+        avatarBriefInfo = new Function(`return ${cleanText}`)();
+    } catch (error) {
+        console.warn("Brief info could not be loaded/parsed.", error);
+    }
+}
 
+async function loadExternalDetailedInfo() {
     try {
-        avatarDetailedInfo = new Function('return ' + detail.replace(/const\s+\w+\s*=\s*/, '').replace(/;$/, ''))();
-    } catch(e) {}
+        const response = await fetch('https://raw.githubusercontent.com/decentralize-dfw/avatar-viewer-v2/refs/heads/main/avatarDetailedInfo.txt');
+        if (!response.ok) throw new Error("Network response was not ok");
+        const text = await response.text();
+        const cleanText = text.replace(/const\s+avatarDetailedInfo\s*=\s*/, '').trim().replace(/;$/, '');
+        avatarDetailedInfo = new Function(`return ${cleanText}`)();
+    } catch (error) {
+        console.warn("Detailed info could not be loaded/parsed.", error);
+    }
+}
 
+async function loadExternalAvatarData() {
     try {
-        avatarData = new Function('return ' + avatars.replace(/const\s+\w+\s*=\s*/, '').replace(/;$/, ''))();
-    } catch(e) { avatarData = []; }
+        const response = await fetch('https://raw.githubusercontent.com/decentralize-dfw/avatar-viewer-v2/refs/heads/main/avatarfiles.txt');
+        if (!response.ok) throw new Error("Network response was not ok");
+        const text = await response.text();
+
+        let cleanText = text.trim();
+        if (cleanText.startsWith('const')) {
+             cleanText = cleanText.replace(/const\s+avatarData\s*=\s*/, '').trim().replace(/;$/, '');
+        }
+
+        avatarData = new Function(`return ${cleanText}`)();
+    } catch (error) {
+        console.error("Avatar data could not be loaded.", error);
+        avatarData = [];
+    }
 }
 
 // ═══════════════════════════════════════
@@ -1270,7 +1292,7 @@ async function init() {
     initScene();
     initVideoPixel();
 
-    await loadData();
+    await Promise.all([loadExternalBriefInfo(), loadExternalDetailedInfo(), loadExternalAvatarData()]);
 
     if (avatarData.length) {
         setupCollections();
